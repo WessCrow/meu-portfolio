@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "skills": {
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "e14c54485cd1699f272c329da2c123e32c1783edf137df77b9983a22fb247001"
+    },
+    "full-output-enforcement": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "e5bf48b1ae561511439cf71672209a10a88cee0968cc925909ff861dfa0a96a7"
+    },
+    "high-end-visual-design": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "5cbaf2c6832e26359d10ee9c97c44acf977e1a7c238f4103048f3fe03e9d08d0"
+    },
+    "industrial-brutalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "e5e9cf7f09fc76c17776b45b89afaca6f05ff96150eac3d65531acbd17976d07"
+    },
+    "minimalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "430cd60d36c62d4ca149515aa2764a91e7c836dde74d70932e4b8599792c156d"
+    },
+    "redesign-existing-projects": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "4faf70b91c5a25aaea36f89b32775489cc082ad691f893db22a4b58063839353"
+    },
+    "stitch-design-taste": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "812b1f62ef93292fdefd4937c9a45714ea8a2119c1011aaa3c73ca6fc2ffc1fe"
+    },
+    "kickoff-doc": {
+      "source": "rjs/shaping-skills",
+      "sourceType": "github",
+      "computedHash": "3f4de0816f6839adc96260da4cec2de2522f2ff119d1cc43730201f65945fa55"
+    },
+    "firecrawl-scrape": {
+      "source": "mendableai/firecrawl-mcp",
+      "sourceType": "github",
+      "computedHash": "c6821e29b04f2095d6ea5202509c1ccaa21872879026daa03eae8a89f24fa1fb"
+    }
+  }
+}

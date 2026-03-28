@@ -1,0 +1,395 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="pt-BR" id="oracle-cc" data-bind="setContextVariable:{name:'masterViewModel', value:$data}" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta charset="utf-8">
+
+  
+  <script type="text/javascript" nonce="">
+    window.isPreviewMode = false ;
+    if (window.isPreviewMode === false ){
+      var bActiveX;
+      try {
+        new ActiveXObject('Microsoft.XMLHTTP');
+        bActiveX = true;
+      }
+      catch(e) { bActiveX = false; }
+      if (window.XMLHttpRequest || bActiveX) {
+        var xhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            window.endpointRegistry = xhttp.response ;
+          }
+        };
+        xhttp.open("GET", "/ccstoreui/v1/registry", true);
+        xhttp.responseType = 'json';
+        xhttp.setRequestHeader("X-CCProfileType", "storefrontUI");
+        xhttp.send();
+      }
+    }
+  </script>
+
+  
+  
+  <link rel="icon" href="/file/v6110800174734708333/general/favicon-new-frigelar2.png">
+  
+
+  
+  
+  
+  
+  
+  <style id="antiClickjack">body{display:none !important;}</style>
+  <script type="text/javascript" nonce="">
+    if (self === top) {
+      var antiClickjack = document.getElementById("antiClickjack");
+      antiClickjack.parentNode.removeChild(antiClickjack);
+    } else {
+      top.location = self.location;
+    }
+  </script>
+  
+  
+  
+  <script type="text/javascript" nonce="">
+    window.urlLocale = '';
+  </script>
+
+  
+
+  <script type="text/javascript" nonce="">
+    window.siteBaseURLPath = '/';
+    window.applicationContextPath =  '';
+    window.siteId = 'siteUS';
+    window.siteIdOnURL = '';
+    window.clientConfigData = {
+                                'loadOjDependentBindings': 'false' ,
+                               
+                                'delayBeforeLoadingOutOfFocusImages': '-1' ,
+                               
+                                'includeOrderDetailsInShippingMethodsPayload': 'false' ,
+                               
+                                'loadImagesLazily': 'true' ,
+                               
+                                'skipLoadingProductTypes': 'true' ,
+                               
+                                'createOrderForLoggedInAtCheckout': 'false' ,
+                               
+                                'allowVirtualShippingGroup': 'true' ,
+                               
+                                'prioritizedLoading': 'true' ,
+                               
+                                'useEnhancedSearch': 'false' 
+                                };
+  </script>
+
+  
+  <script type="text/javascript" nonce="">
+    window.externalServiceData = { social: { scheme: 'https', host: 'social-prod-us.occa.ocs.oraclecloud.com', port: '0' } };
+  </script>
+
+  <script type="text/javascript" nonce="">
+    window.visitorId = '10DAAenhnbwX8dmqhYq9aEPihqW-p4U7sSJ53FMD7nIOzccC2FC';
+    window.visitId = '-88d64b3:19d30aaa649:2661-4094304007';
+  </script>
+
+  
+  
+  
+
+
+<title data-bind="text: $data.title"></title>
+  <!-- ko noIndexMeta: noindex() --><!-- /ko -->
+  <!-- ko if: $data.description -->
+  <meta name="description" data-bind="attr: { content: $data.description }" content="">
+  <!-- /ko -->
+  <!-- ko if: ((typeof($data.keywords) === "function") && ($data.keywords() && $data.keywords().length > 0)) -->
+  <meta name="keywords" data-bind="attr: { content: $data.keywords }" content="">
+  <!-- /ko -->
+  <!-- ko foreach: $data.metaTags -->
+  <meta data-bind="attr: $data">
+  <!-- /ko -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    
+    <link href="/css/style.css?bust=25.12" rel="stylesheet" type="text/css"/>
+
+    
+
+    <link href="https://www.frigelar.com.br/file/v3592012847793330174/css/base.css?occsite=siteUS" rel="stylesheet" type="text/css" /><link href="https://www.frigelar.com.br/file/v1669730962126748503/css/common.css?occsite=siteUS" rel="stylesheet" type="text/css" />
+
+    <!--[if lte IE 9]>
+    <link href="/css/storefront-ie.css?bust=25.12" rel="stylesheet" type="text/css"/>
+
+    <![endif]-->
+
+  
+
+  
+  
+
+  
+
+  <!-- ko if: $data.prevPageNo -->
+  <link rel="prev" data-bind="attr: { href: $data.canonicalRoute() + $data.prevPageNo() }">
+  <!-- /ko -->
+  <!-- ko if: $data.nextPageNo -->
+  <link rel="next" data-bind="attr: { href: $data.canonicalRoute() + $data.nextPageNo() }">
+  <!-- /ko -->
+
+  <!-- ko foreach: $data.alternates -->
+    <link rel="alternate" data-bind="attr: { href: $data.href + $parent.currPageNo(), hreflang: $parent.formatHreflang($data.hrefLang) }" />
+  <!-- /ko -->
+
+  
+  
+
+  <script type="text/javascript" nonce="">
+      function getSamlResponse() {
+        return "";
+      }
+  </script>
+  <script type="text/javascript" nonce="">
+      function getAgentAuthToken() {
+        return "";
+     }
+  </script>
+  <script type="text/javascript" nonce="">
+      function getAgentRedirectUrl() {
+        return "";
+     }
+     function getAgentOrganizationIdValue() {
+             return "";
+     }
+     function getAgentPriceListGroupValue() {
+       return "";
+     }
+  </script>
+
+  <script type="text/javascript" nonce="">
+        function getRelayState() {
+          return "";
+        }
+  </script>
+  <script type="text/javascript" nonce="">
+      function getOAuthToken() {
+        return "";
+     }
+      function getAdditionalFormData() {
+        var additionalFormDataJson = {
+          
+        };
+        return additionalFormDataJson;
+     }
+  </script>
+  <script type="text/javascript" nonce="">
+    function getOpenIdCode() {
+      return "";
+    }
+  </script>
+
+  <script type="text/javascript">     (function(c,l,a,r,i,t,y){         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);     })(window, document, "clarity", "script", "sx99i79sxn"); </script><script>!function(){"use strict";function l(e){for(var t=e,r=0,n=document.cookie.split(";");r<n.length;r++){var o=n[r].split("=");if(o[0].trim()===t)return o[1]}}function s(e){return localStorage.getItem(e)}function u(e){return window[e]}function A(e,t){e=document.querySelector(e);return t?null==e?void 0:e.getAttribute(t):null==e?void 0:e.textContent}var e=window,t=document,r="script",n="dataLayer",o="https://gtmgateway.frigelar.com.br",a="",i="777bvjmwdsv",c="d49dfu=",g="stapeUserId",v="",E="",d=!1… d=!!g&&(m=navigator.userAgent,!!(m=new RegExp("Version/([0-9._]+)(.*Mobile)?.*Safari.*").exec(m)))&&16.4<=parseFloat(m[1]),f="stapeUserId"===g,I=d&&!f?function(e,t,r){void 0===t&&(t="");var n={cookie:l,localStorage:s,jsVariable:u,cssSelector:A},t=Array.isArray(t)?t:[t];if(e&&n[e])for(var o=n[e],a=0,i=t;a<i.length;a++){var c=i[a],c=r?o(c,r):o(c);if(c)return c}else console.warn("invalid uid source",e)}(g,v,E):void 0;d=d&&(!!I||f)}catch(e){console.error(e)}var m=e,g=(m[n]=m[n]||[],m[n].push({"gtm.start":(new Date).getTime(),event:"gtm.js"}),t.getElementsByTagName(r)[0]),v=I?"&bi="+encodeURIComponent(I):"",E=t.createElement(r),f=(d&&(i=8<i.length?i.replace(/([a-z]{8}$)/,"kp$1"):"kp"+i),!d&&a?a:o);E.async=!0,E.src=f+"/"+i+".js?"+c+v,null!=(e=g.parentNode)&&e.insertBefore(E,g)}();</script>
+
+</head>
+<noscript>
+</noscript>
+<body>
+
+  
+
+
+<!-- ko agentBar: isObo() --><!-- /ko -->
+<div id="alert-page-change" class="sr-only" role="alert" aria-atomic="true" aria-live="polite" data-bind="text: pageChangeMessage"></div>
+<div id="alert-modal-change" class="sr-only" role="alert" aria-atomic="true" aria-live="polite" ></div>
+<div id="page" data-bind="css:{'container': containPage}">
+  <header id="headerBar" class="page-row">
+
+    <div data-bind="css:{'container': containHeader}">
+      <!-- ko foreach: headerRows -->
+      <div class="row">
+        <div data-bind="template: { name: 'region-template', foreach: regions }" class="redBox"></div>
+      </div>
+      <!-- /ko -->
+    </div>
+  </header>
+
+  <main class="page-row page-row-expanded">
+    <div id='main' data-bind="css:{'container': containMain}">
+      <!-- ko foreach: bodyRows -->
+      <div class="row">
+        <div data-bind="template: { name: 'region-template', foreach: regions }" class="redBox"></div>
+      </div>
+      <!-- /ko -->
+    </div>
+
+    <div id='loadingModal' class="hide loadingIndicator"></div>
+  </main>
+
+  <footer id="footerBar" class="page-row">
+    <div data-bind="css:{'container': containFooter}">
+      <!-- ko foreach: footerRows -->
+      <div class="row">
+        <div data-bind="template: { name: 'region-template', foreach: regions }" class="redBox"></div>
+      </div>
+      <!-- /ko -->
+    </div>
+  </footer>
+</div>
+
+<script type='text/html' id='region-template'>
+  <!-- ko if: $data.hasOwnProperty('structure') && $data.structure() == 101 -->
+  <div  data-bind="css: widthClass, attr: {id: 'region-'+name()}">
+    <div data-bind="template: { name: 'stack-template' }"></div>
+  </div>
+  <!-- /ko -->
+  <!-- ko ifnot: $data.hasOwnProperty('structure') && $data.structure() == 101 -->
+  <!-- ko if: $data.widgets() && $data.widgets().length && !$data.globalWidgetsOnly() -->
+  <div  data-bind="css: widthClass, attr: {id: 'region-'+name()}">
+    <!-- ko foreach: $data.widgets  -->
+    <!-- ko ifnot: global  -->
+    <!-- ko if: initialized  -->
+    <!-- ko if: $data.elementsSrc -->
+    <!-- ko addTemplate: elementsSrc() --><!-- /ko -->
+    <!-- /ko -->
+    <!-- ko if: isPreview -->
+    <div class="sf-display-error">
+      <span class="sf-error-title" data-bind="text: $root.displayErrorMessage"></span>:
+      <span class="sf-error-msg"></span>
+    </div>
+    <!-- /ko -->
+    <!-- ko ifnot: $data.templateSrc -->
+    <!-- ko if: templateUrl() -->
+    <div data-bind='template: {name: templateUrl(), templateUrl: ""}, attr: {id: typeId()+"-"+id()}, visible:($masterViewModel.storeConfiguration.enablePrioritizedLoading) ? (occPrioritizedDisplay ? occPrioritizedDisplay : true):true' ></div>
+    <!-- /ko -->
+    <!-- /ko -->
+    <!-- ko if: $data.templateSrc -->
+    <div data-bind='template: {name: templateUrl(),templateSrc: templateSrc()}, attr: {id: typeId()+"-"+id()}, visible:($masterViewModel.storeConfiguration.enablePrioritizedLoading) ? (occPrioritizedDisplay ? occPrioritizedDisplay : true):true' ></div>
+    <!-- /ko -->
+    <!-- /ko -->
+    <!-- /ko -->
+    <!-- /ko -->
+  </div>
+  <!-- /ko -->
+  <!-- /ko -->
+</script>
+
+<script type='text/html' id='stack-template'>
+  <!-- ko if: $masterViewModel.isPreview -->
+  <div class="sf-display-error">
+    <span class="sf-error-title" data-bind="text: $root.displayErrorMessage"></span>:
+    <span class="sf-error-msg"></span>
+  </div>
+  <!-- /ko -->
+  <!-- ko ifnot: templateSrc -->
+  <!-- ko if: templatePath() -->
+  <div data-bind='template: {name: templatePath(), templateUrl: ""}, attr: {id: stackType()+"-"+id()}'
+       class="stack-template "></div>
+  <!-- /ko -->
+  <!-- /ko -->
+  <!-- ko if: templateSrc -->
+  <div data-bind='template: {name: name(), templateSrc: templateSrc()}, attr: {id: stackType()+"-"+id()}'
+       class="stack-template "></div>
+  <!-- /ko -->
+</script>
+
+<!-- this template is loaded on site load and is available then onwards even if internet connection has some issue -->
+<script type='text/html' id='notificationsNetworkError'>
+  <span data-bind="text: networkErrorMessage"></span>
+  <u><a data-bind="text: networkErrorReloadText" href="javascript:location.reload(true);"></a></u>
+</script>
+
+
+
+
+  <script type="text/javascript" nonce="">
+    window.storeLibsPath= 'https://www.frigelar.com.br/file/v6643827783781820991/storeJS/25.12/store-libs.js';
+    window.ccKoOjExtensionsPath= 'https://www.frigelar.com.br/file/v6512591561371657474/storeJS/25.12/cc-ko-oj-extensions.js';
+  </script>
+  <script type="text/javascript">var require = {
+ "config": {
+  "ccNavState": {
+   "pageContext": "logo-frigelar-mobile.svg",
+   "pageNumber": "0",
+   "pageid": "assets",
+   "referrer": "/",
+   "slug": null,
+   "statusCode": "200"
+  },
+  "ccResourceLoader": {"jsUrls": [
+   "/file/v5097507711909086425/global/frigelarCustomConstants.min.js?bust=LTUwOTc1MDc3MTE5MDkwODY0MjU=",
+   "/file/v5557781639022425132/global/frigelarJqueryPlugins.min.js?bust=NTU1Nzc4MTYzOTAyMjQyNTEzMg==",
+   "/file/v7935673650722618266/global/frigelarGlobalUtils.min.js?bust=NzkzNTY3MzY1MDcyMjYxODI2Ng==",
+   "/file/v7259722055289407720/global/logisticViewModel.min.js?bust=LTcyNTk3MjIwNTUyODk0MDc3MjA=",
+   "/file/v7628635246069982340/global/mfaProfileValidationViewModel.min.js?bust=NzYyODYzNTI0NjA2OTk4MjM0MA==",
+   "/file/v6813748058593925671/global/geolocationViewModel.min.js?bust=LTY4MTM3NDgwNTg1OTM5MjU2NzE=",
+   "/file/v249781007017081443/global/koCustomExtensions.min.js?bust=LTI0OTc4MTAwNzAxNzA4MTQ0Mw==",
+   "/file/v5000353364985143975/global/frigelarGlobalPaymentUtils.min.js?bust=LTUwMDAzNTMzNjQ5ODUxNDM5NzU="
+  ]},
+  "pageLayout/css-loader": {"optimizingCSS": true}
+ },
+ "urlArgs": "bust=25.12",
+ "waitSeconds": 45
+};</script><script src="https://www.frigelar.com.br/file/v4847802116576099056/storeJS/25.12/require.js?bust=25.12"></script>
+
+  <script src="https://www.frigelar.com.br/file/v2572979678047634012/storeJS/25.12/main.js?bust=25.12"></script>
+
+  <script src="https://www.frigelar.com.br/file/v6643827783781820991/storeJS/25.12/store-libs.js?bust=25.12"></script>
+
+  
+
+
+
+
+
+  
+
+
+</body>
+</html>
+
