@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import {
    MoveUpRight, Terminal, Command, Globe, Target,
@@ -13,15 +13,146 @@ import {
  * Status: Restaurado para a estrutura original de 0.7.1
  */
 
-const charVariants = {
-   hidden: { opacity: 0, y: 10, filter: "blur(4px)" },
-   visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { delay: i * 0.03, duration: 0.4 }
-   })
-};
+/**
+ * ANIMATED_TEXT [MODULE_V1.2]
+ * Protocolo: Revelação escalonada para máxima fidelidade visual
+ */
+
+const BASE_PATH = "/meu-portfolio";
+const ASSET_PREFIX = process.env.NODE_ENV === 'production' ? BASE_PATH : '';
+
+export function AnimatedText({
+   text,
+   type = "words",
+   className = "",
+   delay = 0,
+   stagger = 0.05,
+   once = true,
+   yOffset = 25
+}: {
+   text: string,
+   type?: "words" | "chars",
+   className?: string,
+   delay?: number,
+   stagger?: number,
+   once?: boolean,
+   yOffset?: number
+}) {
+   const elements = type === "words" ? text.split(" ") : text.split("");
+
+   const container = {
+      hidden: { opacity: 0 },
+      visible: {
+         opacity: 1,
+         transition: {
+            staggerChildren: stagger,
+            delayChildren: delay
+         }
+      }
+   };
+
+   const item: any = {
+      hidden: {
+         opacity: 0,
+         y: yOffset,
+         filter: "blur(12px)"
+      },
+      visible: {
+         opacity: 1,
+         y: 0,
+         filter: "blur(0px)",
+         transition: {
+            duration: 1.2,
+            ease: [0.215, 0.61, 0.355, 1]
+         }
+      }
+   };
+
+
+   return (
+      <motion.div
+         variants={container}
+         initial="hidden"
+         whileInView="visible"
+         viewport={{ once, margin: "-5% 0px -5% 0px" }}
+         className={className}
+         style={{ display: className.includes('block') ? 'block' : 'inline-block' }}
+      >
+         {elements.map((el, i) => (
+            <motion.span
+               key={i}
+               variants={item}
+               className="inline-block"
+               style={{ whiteSpace: "pre" }}
+            >
+               {el}{type === "words" && i !== elements.length - 1 ? "\u00A0" : ""}
+            </motion.span>
+         ))}
+      </motion.div>
+   );
+}
+
+/**
+ * SHUFFLE_TEXT [MODULE_V1.0]
+ * Protocolo: Character scramble animates on scroll-entry, then resolves to final text.
+ * Inspired by: artefakt.mov <c-shuffle-chars>
+ */
+export function ShuffleText({
+   text,
+   className = "",
+   delay = 0,
+   speed = 30,
+   once = true
+}: {
+   text: string;
+   className?: string;
+   delay?: number;
+   speed?: number;
+   once?: boolean;
+}) {
+   const [displayed, setDisplayed] = useState(text);
+   const [isInView, setIsInView] = useState(false);
+   const ref = useRef<HTMLSpanElement>(null);
+   const GLITCH_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%*+-=:/|";
+
+   useEffect(() => {
+      const observer = new IntersectionObserver(
+         ([entry]) => {
+            if (entry && entry.isIntersecting) {
+               setIsInView(true);
+               if (once) observer.disconnect();
+            }
+         },
+         { threshold: 0.1 }
+      );
+      if (ref.current) observer.observe(ref.current);
+      return () => observer.disconnect();
+   }, [once]);
+
+   useEffect(() => {
+      if (!isInView) return;
+      let frame = 0;
+      const totalFrames = text.length * 2;
+      const delayMs = delay * 1000;
+      const timer = setTimeout(() => {
+         const interval = setInterval(() => {
+            setDisplayed(
+               text.split("").map((char, i) => {
+                  if (char === " ") return " ";
+                  if (i < frame / 2) return char;
+                  return GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+               }).join("")
+            );
+            frame++;
+            if (frame > totalFrames) { setDisplayed(text); clearInterval(interval); }
+         }, speed);
+      }, delayMs);
+      return () => clearTimeout(timer);
+   }, [isInView, text, delay, speed]);
+
+   return <span ref={ref} className={`font-mono ${className}`} aria-label={text}>{displayed}</span>;
+}
+
 
 const CLIENTS = [
    "Einstein Hospital Israelita",
@@ -36,9 +167,10 @@ const CLIENTS = [
    "ACSC"
 ];
 
-export function GlitchImage({ src, isHovered }: { src: string, isHovered: boolean }) {
+export function GlitchImage({ src, isHovered, isDark = false }: { src: string, isHovered: boolean, isDark?: boolean }) {
+
    return (
-      <div className="relative w-full h-full overflow-hidden bg-canvas">
+      <div className={`relative w-full h-full overflow-hidden ${isDark ? "bg-black" : "bg-white"}`}>
          <img
             src={src}
             alt="Preview"
@@ -48,36 +180,472 @@ export function GlitchImage({ src, isHovered }: { src: string, isHovered: boolea
    );
 }
 
-export function HUDCursor({ isHoveringClickable, cursorXSpring, cursorYSpring }: { isHoveringClickable: boolean, cursorXSpring: any, cursorYSpring: any }) {
+/**
+ * TRON_HERO [COMPONENT_V4.0]
+ * Dual-canvas | Particle physics | Magnetic Cursor | Ambient Clusters
+ */
+export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef: React.RefObject<HTMLDivElement | null> }) {
+   const containerRef = useRef<HTMLDivElement>(null);
+   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
+   const mainCanvasRef = useRef<HTMLCanvasElement>(null);
+   const [rawBitmap, setRawBitmap] = useState<string | null>(null);
+
+   useEffect(() => {
+      fetch(`${ASSET_PREFIX}/img/wess_tron_raw.txt`)
+         .then(res => res.text())
+         .then(text => setRawBitmap(text.trim()))
+         .catch(err => console.error("Failed to load Tron ASCII raw data", err));
+   }, []);
+
+   useEffect(() => {
+      if (!rawBitmap || !bgCanvasRef.current || !mainCanvasRef.current || !containerRef.current) return;
+
+      const bgCanvas = bgCanvasRef.current;
+      const mainCanvas = mainCanvasRef.current;
+      const bgCtx = bgCanvas.getContext('2d');
+      const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true });
+      if (!bgCtx || !mainCtx) return;
+
+      const dpr = window.devicePixelRatio || 1;
+
+      // Config
+      const COLS = 160;
+      const ROWS = 65;
+      const FONT_PX = 14.0;
+      const CHAR_W = FONT_PX * 0.60;
+      const CHAR_H = FONT_PX * 1.12;
+      const PAD = 16;
+      
+      const mainW = Math.floor(COLS * CHAR_W + PAD * 2);
+      const mainH = Math.floor(ROWS * CHAR_H + PAD * 2);
+      
+      mainCanvas.width = mainW * dpr;
+      mainCanvas.height = mainH * dpr;
+      mainCtx.scale(dpr, dpr);
+
+      const resizeBg = () => {
+         const rect = containerRef.current!.getBoundingClientRect();
+         bgCanvas.width = rect.width * dpr;
+         bgCanvas.height = rect.height * dpr;
+         bgCtx.scale(dpr, dpr);
+      };
+      window.addEventListener('resize', resizeBg);
+      resizeBg();
+
+      // Particles Init
+      const N = COLS * ROWS;
+      const px = new Float32Array(N);
+      const py = new Float32Array(N);
+      const ox = new Float32Array(N);
+      const oy = new Float32Array(N);
+      const vx = new Float32Array(N);
+      const vy = new Float32Array(N);
+      const aOff = new Float32Array(N);
+      const bitmap = new Uint8Array(N);
+
+      const POOLS = [
+         '', 
+         '. , -', 
+         ': ; ~ +', 
+         'x X = * %', 
+         '# @ W 8 B M &'
+      ];
+      const chars = new Array(N).fill('');
+      const rc = (lv: number) => { 
+         const p = POOLS[lv]; 
+         if (!p) return '';
+         const opts = p.replace(/ /g, '');
+         return opts[Math.floor(Math.random() * opts.length)] || ''; 
+      };
+
+      for (let i = 0; i < N; i++) {
+         const lv = parseInt(rawBitmap[i] || '0', 10);
+         bitmap[i] = lv;
+         if (lv > 0) {
+            const col = i % COLS;
+            const row = Math.floor(i / COLS);
+            const x = PAD + col * CHAR_W;
+            const y = PAD + row * CHAR_H;
+            ox[i] = x;
+            oy[i] = y;
+            px[i] = x;
+            py[i] = y;
+            
+            aOff[i] = Math.random() * Math.PI * 2;
+            chars[i] = rc(lv);
+         }
+      }
+
+      let mouseX = -1000;
+      let mouseY = -1000;
+      let lastMouseX = -1000;  // Track if mouse is moving
+      let lastMouseY = -1000;
+      let isHover = false;
+      const trailPoints: {x: number, y: number, age: number}[] = [];
+      const MAX_TRAIL_AGE = 50; // The length of the brush stroke "tail"
+
+      const handleMove = (e: MouseEvent) => {
+         const rect = mainCanvas.getBoundingClientRect();
+         // Account for object-cover scaling and centered cropping
+         // We use mainW and mainH instead of mainCanvas.width since particles live in logical space (unscaled by dpr)
+         const scale = Math.max(rect.width / mainW, rect.height / mainH);
+         const displayW = mainW * scale;
+         const displayH = mainH * scale;
+         const offsetX = (rect.width - displayW) / 2;
+         const offsetY = (rect.height - displayH) / 2;
+         
+         mouseX = (e.clientX - rect.left - offsetX) / scale;
+         mouseY = (e.clientY - rect.top - offsetY) / scale;
+         isHover = true;
+      };
+      const handleLeave = () => {
+         isHover = false;
+      };
+
+      mainCanvas.addEventListener('mousemove', handleMove);
+      mainCanvas.addEventListener('mouseleave', handleLeave);
+
+      // Clusters (ambient code)
+      const ZONES = [
+         { nx: 0.04, ny: 0.15 },  // TL (Left Aligned)
+         { nx: 0.04, ny: 0.50 },  // ML (Left Aligned)
+         { nx: 0.04, ny: 0.82 },  // BL (Left Aligned)
+         { nx: 0.96, ny: 0.15 },  // TR (Right Aligned)
+         { nx: 0.96, ny: 0.50 },  // MR (Right Aligned)
+         { nx: 0.96, ny: 0.82 },  // BR (Right Aligned)
+      ];
+      
+      const SKILLS = [
+         '<p class="skills-line">\n  AI Engineer\n  UX Research\n  Behavioral Analysis\n  Data-Driven Insights\n  Human-Centered Design\n</p>',
+         '<p class="skills-line">\n  UI Designer\n  Design Systems\n  Visual Architecture\n  Interaction Design\n  Accessibility\n</p>',
+         '<p class="skills-line">\n  UX Designer\n  Service Design\n  Journey Mapping\n  Experience Strategy\n  Product Thinking\n</p>',
+         '<p class="skills-line">\n  Innovation Designer\n  Systems Thinking\n  Emerging Technologies\n  Prototyping\n  Strategic Design\n</p>'
+      ];
+
+      const makeLines = () => {
+         const skill = SKILLS[Math.floor(Math.random() * SKILLS.length)];
+         return skill!.split('\n');
+      };
+
+      class Cluster {
+         x: number; y: number;
+         full: string;
+         visible: number;
+         total: number;
+         state: 'typing' | 'hold' | 'deleting' | 'done';
+         typeDelay: number;
+         holdTimer: number;
+         typeSpeed: number;
+         deleteSpeed: number;
+         holdDuration: number;
+         alpha: number;
+
+         constructor(zone: {nx: number, ny: number}, canvasW: number, canvasH: number) {
+            this.x = zone.nx * canvasW;
+            this.y = zone.ny * canvasH;
+            this.full = makeLines().join('\n');
+            this.total = this.full.length;
+            this.visible = 0;
+            this.state = 'typing';
+            this.typeDelay = 0;
+            this.holdTimer = 0;
+            this.typeSpeed = 5; // Slow typing
+            this.deleteSpeed = 3; // Slow delete
+            this.holdDuration = 360; // Hold much longer
+            this.alpha = 0.95; // High contrast
+         }
+
+         tick() {
+            if (this.state === 'typing') {
+               if (++this.typeDelay >= this.typeSpeed) {
+                  this.typeDelay = 0;
+                  this.visible = Math.min(this.visible + 1, this.total);
+                  if (this.visible >= this.total) {
+                     this.state = 'hold';
+                     this.holdTimer = 0;
+                  }
+               }
+            } else if (this.state === 'hold') {
+               if (++this.holdTimer >= this.holdDuration) {
+                  this.state = 'deleting';
+                  this.typeDelay = 0;
+               }
+            } else if (this.state === 'deleting') {
+               if (++this.typeDelay >= this.deleteSpeed) {
+                  this.typeDelay = 0;
+                  this.visible = Math.max(this.visible - 1, 0);
+                  if (this.visible <= 0) {
+                     this.state = 'done';
+                  }
+               }
+            }
+         }
+
+         draw(ctx: CanvasRenderingContext2D, mainScale: number = 1.0) {
+            const lines = this.full.slice(0, this.visible).split('\n');
+            const blink = Math.floor(Date.now() / 400) % 2 === 0;
+            const size = (FONT_PX * 0.90) * mainScale; 
+            // Match exactly Geist Mono
+            ctx.font = `bold ${size}px "Geist Mono", monospace`; 
+            
+            const baseC = isDarkMode ? 160 : 70; // Darker text in Light Mode
+            ctx.fillStyle = `rgba(${baseC}, ${baseC}, ${baseC}, ${this.alpha * 0.8})`; 
+            
+            // Right-align text if it's placed on the right side of the screen (e.g nx > 0.5)
+            // ctx.canvas.width is the physical width, our this.x is logical.
+            const isRightSide = this.x > (ctx.canvas.width / window.devicePixelRatio) / 2;
+            ctx.textAlign = isRightSide ? 'right' : 'left';
+            
+            lines.forEach((row, li) => {
+               const isLast = (li === lines.length - 1);
+               const text = row + (isLast && this.state !== 'hold' && blink ? '█' : '');
+               // Tighter line-spacing (1.25 instead of 1.50)
+               ctx.fillText(text, this.x, this.y + li * (size * 1.25));
+            });
+            // Reset text align for other drawings
+            ctx.textAlign = 'left';
+         }
+      }
+
+      let clusters: Cluster[] = [];
+      let frame = 0;
+      let pulsePhase = 0;
+      let clusterFrames = 0;
+
+      // Massive interaction radius for space dust
+      const RADIUS = 380; 
+      const RCX = RADIUS / CHAR_W;
+      const RCY = RADIUS / CHAR_H;
+
+      let animId: number;
+      const loop = () => {
+         frame++;
+         pulsePhase += 0.045;
+         clusterFrames++;
+
+         // BG Layer TICK
+         bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+         // Módulo de Spawn Desordenado e Assimétrico (Ex: 2x1, 1x3, 1x1)
+         if (clusterFrames > 60) {
+            clusterFrames = 0;
+            const targetCount = 2 + Math.floor(Math.random() * 3); // De 2 a 4 skills no total
+            if (clusters.length < targetCount && Math.random() < 0.6) {
+               const zIndex = Math.floor(Math.random() * ZONES.length);
+               const z = ZONES[zIndex]!;
+               
+               // Validação de colisão de zona (Impede texto encavalar)
+               const px = z.nx * (bgCanvas.width / dpr);
+               const py = z.ny * (bgCanvas.height / dpr);
+               const isOccupied = clusters.some(c => 
+                  Math.abs(c.x - px) < 1 && 
+                  Math.abs(c.y - py) < 1
+               );
+
+               if (!isOccupied) {
+                  clusters.push(new Cluster(z, bgCanvas.width / dpr, bgCanvas.height / dpr));
+               }
+            }
+         }
+
+         const rect = containerRef.current!.getBoundingClientRect();
+         const mainScale = Math.max(rect.width / mainW, rect.height / mainH);
+
+         clusters = clusters.filter(c => c.state !== 'done');
+         clusters.forEach(c => {
+            c.tick();
+            c.draw(bgCtx, mainScale);
+         });
+
+         // Main Layer TICK
+         mainCtx.clearRect(0, 0, mainW, mainH);
+         mainCtx.font = `bold ${FONT_PX}px 'Courier New', monospace`;
+         mainCtx.textBaseline = 'top';
+
+         const pulse = 0.55 + 0.45 * Math.sin(pulsePhase);
+
+         // Trail Physics Tick
+         const isMouseMoving = (mouseX !== lastMouseX || mouseY !== lastMouseY);
+         if (isHover && isMouseMoving) {
+            // Adds the "head" of the brush stroke only when actively moving
+            trailPoints.push({ x: mouseX, y: mouseY, age: 0 });
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+         }
+         
+         // Age and prune the trail
+         for (let i = trailPoints.length - 1; i >= 0; i--) {
+            trailPoints[i].age++;
+            if (trailPoints[i]!.age > MAX_TRAIL_AGE) {
+               trailPoints.splice(i, 1);
+            }
+         }
+
+         // ASCII Breathing effect
+         if (frame % 9 === 0) {
+             const toSwap = Math.floor(N * 0.012);
+             for(let k=0; k<toSwap; k++) {
+                 const idx = Math.floor(Math.random() * N);
+                 const lv = bitmap[idx];
+                 if (lv !== undefined && lv > 0) chars[idx] = rc(lv);
+             }
+         }
+
+         for (let i = 0; i < N; i++) {
+            if (!bitmap[i]) continue;
+
+            // Water Trail Deconstruction Physics (Grosso para Fino)
+            for (let t = 0; t < trailPoints.length; t++) {
+               const tr = trailPoints[t]!;
+               const dx = px[i]! - tr.x;
+               const dy = py[i]! - tr.y;
+               const distSq = dx * dx + dy * dy;
+
+               const factor = 1 - (tr.age / MAX_TRAIL_AGE); // 1.0 at head, 0.0 at tail
+               const radius = 42 * factor; // Thick to thin teardrop radius (35 + 20%)
+               const rSq = radius * radius;
+
+               if (distSq < rSq && distSq > 0.1) {
+                  const dist = Math.sqrt(distSq);
+                  const penetration = radius - dist;
+                  const pushX = (dx / dist) * penetration;
+                  const pushY = (dy / dist) * penetration;
+                  
+                  // Immediately snap to the edge of the rigid body
+                  px[i] += pushX * 0.8;
+                  py[i] += pushY * 0.8;
+                  
+                  // Also add physical velocity so they float elastically outward from the stack
+                  vx[i] += pushX * 0.15;
+                  vy[i] += pushY * 0.15;
+               }
+            }
+
+            if (px[i]! < -12 || px[i]! > mainW + 12) continue;
+
+            const disp = Math.sqrt((px[i] - ox[i])**2 + (py[i] - oy[i])**2);
+
+            // Space Dust Fluid Spring Physics
+            // Higher friction and slower spring creates the liquid re-filling effect
+            vx[i] += (ox[i]! - px[i]!) * 0.016;
+            vy[i] += (oy[i]! - py[i]!) * 0.016;
+            vx[i] *= 0.84;
+            vy[i] *= 0.84;
+            
+            px[i] += vx[i]!;
+            py[i] += vy[i]!;
+
+            // Space Dust Grayscale Colors - Maximum Contrast & Detail Rule
+            const lv = bitmap[i]!;
+            
+            // Explicit contrast steps instead of linear math
+            let b = 0;
+            if (lv === 4) b = 255;
+            else if (lv === 3) b = 190;
+            else if (lv === 2) b = 130;
+            else b = 70;
+            
+            // Fade out smoothly based on displacement (particles fly away)
+            const fade = Math.max(0, 1 - (disp / 90));
+            if (fade <= 0.01) continue; 
+
+            // White dust on Dark Mode, Dark dust on Light Mode
+            let dustColor;
+            if (isDarkMode) {
+               dustColor = disp < 1.0 ? b : Math.min(255, b + disp * 2.0);
+            } else {
+               dustColor = disp < 1.0 ? (255 - b) : Math.max(0, (255 - b) - disp * 2.0);
+            }
+            
+            // Keep alpha at 1.0 when resting for max detail, otherwise fade the 'trail' slightly
+            const alpha = disp < 0.5 ? 1.0 : (0.5 + 0.5 * fade);
+
+            mainCtx.fillStyle = `rgba(${dustColor}, ${dustColor}, ${dustColor}, ${alpha})`;
+            mainCtx.fillText(chars[i], px[i], py[i]);
+         }
+
+         animId = requestAnimationFrame(loop);
+      };
+
+      loop();
+
+      return () => {
+         cancelAnimationFrame(animId);
+         mainCanvas.removeEventListener('mousemove', handleMove);
+         mainCanvas.removeEventListener('mouseleave', handleLeave);
+         window.removeEventListener('resize', resizeBg);
+      };
+   }, [rawBitmap, isDarkMode]);
+
+   return (
+      <div
+         ref={(node) => {
+            if (containerRef) (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+            if (heroRef) (heroRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+         }}
+         className={`absolute inset-0 overflow-hidden flex items-center justify-center transition-colors duration-1000 select-none ${isDarkMode ? "bg-[#060606]" : "bg-white"}`}
+      >
+         <canvas ref={bgCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+         
+         {/* HERO DOT-GRID BACKGROUND */}
+         <div
+            className="absolute inset-0 pointer-events-none z-0"
+            style={{
+               backgroundImage: `radial-gradient(circle, ${isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'} 1px, transparent 1px)`,
+               backgroundSize: '24px 24px'
+            }}
+         />
+
+         {/* Main container keeps aspect ratio centered */}
+         <div className={`relative w-full h-full flex items-center justify-center overflow-hidden pointer-events-none ${isDarkMode ? "mix-blend-screen" : "mix-blend-multiply"}`}>
+            <canvas 
+               ref={mainCanvasRef} 
+               className="relative z-10 cursor-none w-full h-full object-cover pointer-events-auto" 
+            />
+         </div>
+      </div>
+   );
+}
+
+
+
+export function HUDCursor({
+   isHoveringClickable,
+   cursorXSpring,
+   cursorYSpring
+}: {
+   isHoveringClickable: boolean;
+   cursorXSpring: any;
+   cursorYSpring: any;
+}) {
    return (
       <div className="fixed inset-0 pointer-events-none z-[9999]">
          {/* AXIS LINES */}
-         <motion.div style={{ y: cursorYSpring }} className="absolute left-0 w-full h-[1px] bg-muted opacity-50" />
-         <motion.div style={{ x: cursorXSpring }} className="absolute top-0 h-full w-[1px] bg-muted opacity-50" />
+         <motion.div style={{ y: cursorYSpring }} className="absolute left-0 w-full h-[1px] bg-muted opacity-30" />
+         <motion.div style={{ x: cursorXSpring }} className="absolute top-0 h-full w-[1px] bg-muted opacity-30" />
 
-         {/* TERMINAL SIGHT (+) */}
+         {/* TERMINAL SIGHT */}
          <motion.div
             style={{ x: cursorXSpring, y: cursorYSpring }}
             className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none"
          >
             <motion.div
                animate={{
-                  scale: isHoveringClickable ? 1.5 : 1,
-                  backgroundColor: isHoveringClickable ? "var(--color-text-primary)" : "rgba(0,0,0,0)"
+                  scale: isHoveringClickable ? 1.8 : 1,
+                  backgroundColor: "transparent"
                }}
-               transition={{ duration: 0.2 }}
-               className="relative w-6 h-6 rounded-full border border-ink flex items-center justify-center mix-blend-difference"
+               transition={{ type: "spring", stiffness: 400, damping: 25 }}
+               className="relative w-6 h-6 rounded-full border border-white flex items-center justify-center mix-blend-difference"
             >
-               {/* INTERNAL RETICLE */}
-               <div className={`absolute w-[40%] h-[1px] transition-colors duration-200 ${isHoveringClickable ? 'bg-canvas' : 'bg-ink'}`} />
-               <div className={`absolute h-[40%] w-[1px] transition-colors duration-200 ${isHoveringClickable ? 'bg-canvas' : 'bg-ink'}`} />
+               <div className="absolute w-[40%] h-[1px] bg-white transition-colors duration-200" />
+               <div className="absolute h-[40%] w-[1px] bg-white transition-colors duration-200" />
             </motion.div>
          </motion.div>
       </div>
    );
 }
 
-export function ProjectRow({ step, title, desc, img, icon: Icon }: { step: string, title: string, desc: string, img: string, icon?: React.ElementType }) {
+export function ProjectRow({ step, title, desc, img, isDark, icon: Icon }: { step: string, title: string, desc: string, img: string, isDark?: boolean, icon?: React.ElementType }) {
    const [isHovered, setIsHovered] = useState(false);
 
    return (
@@ -108,7 +676,8 @@ export function ProjectRow({ step, title, desc, img, icon: Icon }: { step: strin
                      className="absolute right-32 top-1/2 -translate-y-1/2 w-48 h-64 z-50 pointer-events-none hidden lg:block"
                   >
                      <div className="w-full h-full border border-muted shadow-[0_30px_60px_rgba(0,0,0,0.1)] overflow-hidden bg-surface p-[var(--spacing-2)]">
-                        <GlitchImage src={img} isHovered={isHovered} />
+                        <GlitchImage src={img} isHovered={isHovered} isDark={isDark ?? false} />
+
                      </div>
                      <div className="absolute -bottom-6 left-0">
                         <span className="font-mono text-[8px] opacity-40 uppercase tracking-widest bg-muted text-on-dark px-1 font-bold">Case_V26_ID_{step}</span>
@@ -130,15 +699,21 @@ export function ProjectRow({ step, title, desc, img, icon: Icon }: { step: strin
 
 export default function WessPortfolio() {
    const [isMounted, setIsMounted] = useState(false);
-   const [isDarkMode, setIsDarkMode] = useState(false);
+   const [isDarkMode, setIsDarkMode] = useState(true);
+   const [isMenuOpen, setIsMenuOpen] = useState(false);
    const [isHoveringClickable, setIsHoveringClickable] = useState(false);
    const cursorX = useMotionValue(-100);
    const cursorY = useMotionValue(-100);
+   const heroRef = useRef<HTMLDivElement>(null);
+
 
    useEffect(() => {
       // Theme initialization
       const savedTheme = localStorage.getItem("wess-theme");
-      if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      if (savedTheme === "light") {
+         setIsDarkMode(false);
+         document.documentElement.classList.remove("dark");
+      } else {
          setIsDarkMode(true);
          document.documentElement.classList.add("dark");
       }
@@ -174,8 +749,7 @@ export default function WessPortfolio() {
          const isClickable = target.closest('button') ||
             target.closest('a') ||
             target.closest('[role="button"]') ||
-            target.closest('.cursor-pointer') ||
-            target.closest('.cursor-crosshair');
+            target.closest('.cursor-pointer');
 
          setIsHoveringClickable(!!isClickable);
       };
@@ -193,26 +767,26 @@ export default function WessPortfolio() {
    if (!isMounted) return null;
 
    return (
-      <div className="relative min-h-screen overflow-x-hidden selection:bg-black selection:text-white cursor-none transition-colors duration-1000">
+      <div className={`relative min-h-screen overflow-x-hidden selection:bg-ink selection:text-canvas cursor-none transition-colors duration-1000 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
          <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} />
 
          {/* HEADER PROTOCOL (0.7.1) */}
-         <header className="fixed top-0 left-0 w-full z-[80] border-b border-muted bg-canvas/80 backdrop-blur-sm px-8 h-[53px] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] font-medium">
+         <header className={`fixed top-0 left-0 w-full z-[80] border-b border-muted transition-colors px-6 md:px-8 h-[53px] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] font-medium ${isDarkMode ? "bg-black/90 text-white backdrop-blur-md" : "bg-white text-black"}`}>
+            {/* LOGO */}
             <div className="flex items-center gap-6">
-               <div className="w-[28px] h-[28px] bg-ink grayscale opacity-60 dark:opacity-100" style={{ maskImage: 'url(/logo_black.svg)', maskSize: 'contain' }} />
-               <div className="flex items-center gap-2">
+               <div className={`w-[28px] h-[28px] bg-ink grayscale transition-opacity ${isDarkMode ? "opacity-100" : "opacity-60"}`} style={{ maskImage: `url(${ASSET_PREFIX}/logo_black.svg)`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' }} />
+               <div className="hidden md:flex items-center gap-2">
                   <span className="opacity-30 tracking-widest uppercase">Wess // PROJETANDO DESDE 2008</span>
-
                </div>
             </div>
 
-            <div className="flex items-center gap-10">
+            {/* DESKTOP NAV */}
+            <div className="hidden md:flex items-center gap-10">
                {(
                   [["cases", "PROJETOS"], ["experience", "EXPERIÊNCIA"], ["connect", "CONTATO"]] as const
                ).map(([anchor, label]) => (
                   <a key={anchor} href={`#${anchor}`} className="hover:line-through transition-all opacity-40 hover:opacity-100">{label}</a>
                ))}
-
                <div className="flex items-center gap-3 border-l border-muted pl-10">
                   <span className="opacity-20 uppercase text-[8px] font-medium">Modo_Escuro</span>
                   <button
@@ -227,100 +801,65 @@ export default function WessPortfolio() {
                   </button>
                </div>
             </div>
+
+            {/* MOBILE RIGHT: THEME TOGGLE + HAMBURGER */}
+            <div className="flex md:hidden items-center gap-4">
+               <button
+                  onClick={toggleTheme}
+                  className="w-8 h-4 bg-ink/10 relative rounded-full p-[2px] cursor-none hover:bg-ink/20 transition-colors"
+               >
+                  <motion.div
+                     animate={{ x: isDarkMode ? 16 : 0 }}
+                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                     className="w-3 h-3 bg-ink rounded-full"
+                  />
+               </button>
+               <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="flex flex-col gap-[5px] cursor-none p-1"
+                  aria-label="Menu"
+               >
+                  <motion.span animate={{ rotate: isMenuOpen ? 45 : 0, y: isMenuOpen ? 7 : 0 }} className="block w-5 h-[1.5px] bg-ink origin-center transition-all" />
+                  <motion.span animate={{ opacity: isMenuOpen ? 0 : 1 }} className="block w-5 h-[1.5px] bg-ink" />
+                  <motion.span animate={{ rotate: isMenuOpen ? -45 : 0, y: isMenuOpen ? -7 : 0 }} className="block w-5 h-[1.5px] bg-ink origin-center transition-all" />
+               </button>
+            </div>
          </header>
+
+         {/* MOBILE MENU OVERLAY */}
+         <AnimatePresence>
+            {isMenuOpen && (
+               <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.25 }}
+                  className={`fixed top-[53px] left-0 w-full z-[79] ${isDarkMode ? "bg-black" : "bg-white"} border-b border-muted flex flex-col font-mono text-[11px] uppercase tracking-[0.3em] md:hidden`}
+               >
+                  {([["cases", "PROJETOS"], ["experience", "EXPERIÊNCIA"], ["connect", "CONTATO"]] as const).map(([anchor, label]) => (
+                     <a
+                        key={anchor}
+                        href={`#${anchor}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="px-6 py-5 border-b border-muted opacity-60 hover:opacity-100 hover:bg-surface-sunken transition-all"
+                     >{label}</a>
+                  ))}
+               </motion.div>
+            )}
+         </AnimatePresence>
 
          <main className="pt-[53px] max-w-[1920px] mx-auto min-h-[calc(100vh-53px)]">
 
-            {/* HERO BLOCK (EDITORIAL PORTRAIT ARCHITECTURE) — v0.9.0.GLITCH */}
-            <section 
-               className="grid grid-cols-1 md:grid-cols-12 min-h-[75vh] border-b border-muted overflow-hidden relative"
-               style={{ backgroundColor: isDarkMode ? '#222222' : 'var(--color-canvas)' }}
+            {/* TRON ASCII HERO — REBOOTED v4.0 */}
+            <section
+               className={`col-span-12 h-[calc(100vh-140px)] min-h-[500px] border-b border-muted overflow-hidden relative transition-colors duration-1000 ${isDarkMode ? 'bg-[#060606]' : 'bg-white'}`}
             >
-
-               {/* LEFT SIDEBAR: VERTICAL IDENTITY & METADATA */}
-               <div 
-                  className="md:col-span-3 flex flex-col justify-between p-[var(--spacing-section)] relative z-20"
-                  style={{ backgroundColor: isDarkMode ? '#222222' : 'var(--color-canvas)' }}
-               >
-                  <div className="space-y-12">
-                     <div className="flex items-center gap-4">
-                        <span className="w-8 h-[1px] bg-muted" />
-                        <span className="font-mono text-[9px] uppercase tracking-[0.4em] opacity-30 italic"> 2026 // 27 </span>
-                     </div>
-                     <ScrollReveal delay={0.1} className="rotate-0 md:rotate-0 flex flex-col gap-1 translate-x-0">
-                        <h1 className="text-5xl font-display leading-[1.1] tracking-tighter uppercase font-bold text-ink [writing-mode:vertical-rl] md:[writing-mode:vertical-rl] rotate-180 self-start">
-                           PROJETANDO <br /> EXPERIÊNCIAS
-                        </h1>
-                     </ScrollReveal>
-                  </div>
-                  <ScrollReveal delay={0.3} className="space-y-4">
-                     <p className="font-mono text-[10px] uppercase tracking-[0.4em] opacity-40 leading-relaxed max-w-[20ch] font-bold">
-                        ESTRATÉGIA POTENCIALIZADA POR IA PARA SIMPLIFICAR O COMPLEXO.
-                     </p>
-                  </ScrollReveal>
-               </div>
-
-               {/* MAIN FOCAL AREA: IMAGE & HUD OVERLAYS (v2.0 - CLEAN MINIMALISM) */}
-               <div 
-                  className="md:col-span-9 relative overflow-hidden group"
-                  style={{ backgroundColor: isDarkMode ? '#222222' : '#EEEEEE' }}
-               >
-                  <motion.div
-                     initial={{ opacity: 0, scale: 1.1 }}
-                     animate={{ opacity: 1, scale: 1.05 }}
-                     whileHover={{ scale: 1.08 }}
-                     transition={{ duration: 1.5, ease: "easeOut" }}
-                     className="w-full h-full relative"
-                  >
-                     <img
-                        src="/wess.png"
-                        alt="Wess"
-                        className="w-full h-full object-cover grayscale object-[center_5%] brightness-[1.1] contrast-110 opacity-100 group-hover:grayscale-0 transition-all duration-1000"
-                     />
-                  </motion.div>
-
-                  {/* STATIC UI GRID */}
-                  <div className="absolute inset-0 z-50 pointer-events-none opacity-5 bg-[radial-gradient(circle,rgba(0,0,0,0.2)_1px,transparent_1px)] bg-[size:24px_24px]" />
-
-                  {/* HUD OVERLAYS (CLEAN VERSION) */}
-                  <div className="absolute inset-0 z-10 p-[var(--spacing-section)] flex flex-col justify-between pointer-events-none">
-                     <div className="flex justify-end items-start">
-                        <div className="flex items-center gap-4 p-4 border border-muted bg-canvas/40 backdrop-blur-md pointer-events-auto cursor-pointer hover:bg-canvas transition-all">
-                           <Target size={12} className="text-ink opacity-60" />
-                           <span className="font-mono text-[9px] uppercase tracking-widest font-bold">Protocolo_Ativo</span>
-                           <div className="w-2 h-2 bg-[#00FF41] shadow-[0_0_8px_#00FF41] animate-pulse" />
-                        </div>
-                     </div>
-
-                     <div className="flex justify-between items-end">
-                        <div className="space-y-6 pointer-events-auto">
-                           <div className="flex flex-col items-start gap-1">
-                              <span className="bg-black text-white text-[clamp(1.5rem,4vw,2.5rem)] font-display italic font-black uppercase px-4 py-2 leading-[1.1] inline-block">
-                                 TRANSFORMO PROCESSOS
-                              </span>
-                              <span className="bg-black text-white text-[clamp(1.5rem,4vw,2.5rem)] font-display italic font-black uppercase px-4 py-2 leading-[1.1] inline-block">
-                                 COMPLEXOS EM INTERFACES
-                              </span>
-                              <span className="bg-black text-white text-[clamp(1.5rem,4vw,2.5rem)] font-display italic font-black uppercase px-4 py-2 leading-[1.1] inline-block">
-                                 FLUIDAS E FÁCEIS DE USAR.
-                              </span>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-
-                  {/* SCANLINE EFFECT */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/[0.02] to-transparent h-[20%] w-full animate-scan pointer-events-none z-20" />
-               </div>
-
-               <style jsx>{`
-                  @keyframes scan { 0% { top: -20%; } 100% { top: 100%; } }
-                  .animate-scan { animation: scan 8s linear infinite; }
-               `}</style>
+               <TronHero isDarkMode={isDarkMode} heroRef={heroRef} />
             </section>
 
+
             {/* TELEMETRY MATRIX (002) */}
-            <section className="grid grid-cols-1 md:grid-cols-12 border-b border-muted bg-canvas divide-x divide-muted">
+            <section className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted transition-colors divide-x divide-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                <div className="md:col-span-3 p-[var(--spacing-section)] flex items-center justify-center font-mono text-[10px] uppercase opacity-20 tracking-widest text-ink font-bold gap-3">
                   <Activity size={12} />
                   Protocolos_Ativos.v26
@@ -349,8 +888,8 @@ export default function WessPortfolio() {
             </section>
 
             {/* AREA_CASES: VERTICAL STRATEGIC SEQUENCE — TYPOGRAPHIC ALIGNMENT v1.5.0 */}
-            <section id="cases" className="col-span-12 flex flex-col text-ink bg-canvas relative">
-               <div className="grid grid-cols-1 md:grid-cols-12 border-b border-muted bg-secondary/30">
+            <section id="cases" className={`col-span-12 flex flex-col transition-colors relative ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+               <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                   <div className="md:col-span-3 p-[var(--spacing-section)] border-r border-muted flex items-center">
                      <ScrollReveal>
                         <span className="font-mono text-[9px] opacity-30 uppercase tracking-[0.4em] italic font-bold">002 // AREA_CASES</span>
@@ -358,7 +897,10 @@ export default function WessPortfolio() {
                   </div>
                   <div className="md:col-span-9 p-[var(--spacing-section)]">
                      <ScrollReveal delay={0.1}>
-                        <h2 className="text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold">LOG_DE_ENTREGAS</h2>
+                        <h2 className="text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold">
+                           <ShuffleText text="LOG_DE_ENTREGAS" delay={0.15} speed={25} />
+                        </h2>
+
                      </ScrollReveal>
                   </div>
                </div>
@@ -395,7 +937,7 @@ export default function WessPortfolio() {
             </section>
 
             {/* STRATEGIC PARTNERS (MARQUEE) — v0.9.12 */}
-            <section className="col-span-12 border-b border-muted py-12 bg-canvas overflow-hidden whitespace-nowrap group">
+            <section className={`col-span-12 border-b border-muted py-12 overflow-hidden whitespace-nowrap group ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                <div className="flex gap-24 animate-marquee items-center translate-z-0">
                   {[...CLIENTS, ...CLIENTS, ...CLIENTS].map((client, i) => (
                      <motion.span
@@ -410,33 +952,34 @@ export default function WessPortfolio() {
             </section>
 
             {/* IDENTITY BLOCK (003 // SOLICITE) — UNIFIED PATTERN v1.7.0 */}
-            <section id="experience" className="col-span-12 flex flex-col text-ink bg-canvas relative">
+            <section id="experience" className={`col-span-12 flex flex-col transition-colors relative ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                {/* SECTION HEADER — MATCHING 002 PATTERN */}
-               <div className="grid grid-cols-1 md:grid-cols-12 border-b border-muted bg-secondary/30">
+               <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                   <div className="md:col-span-3 p-[var(--spacing-section)] border-r border-muted flex items-center">
                      <ScrollReveal>
-                        <span className="font-mono text-[9px] opacity-20 uppercase tracking-[0.4em] italic font-bold text-ink">003 // AREA_EXPERIENCIA</span>
+                        <span className={`font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-bold ${isDarkMode ? "text-white" : "text-black"}`}>003 // LOGS_DETALHADOS</span>
                      </ScrollReveal>
                   </div>
                   <div className="md:col-span-9 p-[var(--spacing-section)]">
                      <ScrollReveal delay={0.1}>
-                        <h2 className="text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold text-ink">LOG_DE_SOLUÇÕES</h2>
+                        <h2 className={`text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                           <ShuffleText text="LOG_DE_SOLUÇÕES" delay={0.15} speed={25} />
+                        </h2>
+
                      </ScrollReveal>
                   </div>
                </div>
 
                {/* SECTION CONTENT — EXPANDED TO FULL WIDTH */}
                <div className="grid grid-cols-1 md:grid-cols-12">
-                  <div className="col-span-12 p-[var(--spacing-section)] md:p-32 flex flex-col items-start justify-center bg-secondary relative overflow-hidden group min-h-[60vh]">
+                  <div className={`col-span-12 p-[var(--spacing-section)] md:p-32 flex flex-col items-start justify-center relative overflow-hidden group min-h-[60vh] transition-colors ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                      <ScrollReveal>
-                        <h2 className="text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase text-ink max-w-[20ch] md:max-w-none text-left relative z-10 transition-transform duration-1000 group-hover:translate-x-4">
-                           Interfaces <br />
-                           Inteligentes e Intuitivas. <br />
-                           Substituindo a incerteza <br />
-                           por fluxos desenhados <br />
-                           para guiar o usuário <br />
-                           com total clareza
+                        <h2 className={`text-3xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase ${isDarkMode ? "text-white" : "text-black"} max-w-none md:max-w-none text-left relative z-10 transition-transform duration-1000 group-hover:translate-x-4`}>
+                           <AnimatedText text="Eu construo interfaces inteligentes e intuitivas." type="words" stagger={0.1} delay={0.2} /> <br />
+                           <AnimatedText text="Substituo incertezas por fluxos" type="words" stagger={0.1} delay={0.4} /> <br />
+                           <AnimatedText text="objetivos que guiam o usuário com total clareza" type="words" stagger={0.1} delay={0.6} />
                         </h2>
+
                      </ScrollReveal>
                      {/* Subtle Scanline for consistency */}
                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/[0.01] to-transparent h-[100%] w-full animate-scan pointer-events-none opacity-50" />
@@ -446,36 +989,34 @@ export default function WessPortfolio() {
 
 
             {/* EXPERIENCE_LOG — TYPOGRAPHIC ALIGNMENT v1.5.0 */}
-            <section className="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-muted min-h-[400px] text-ink divide-y md:divide-y-0 md:divide-x divide-muted">
-               <ScrollReveal delay={0.1}><ExpCell id="01" entity="COMPASSO UOL" role="Líder de Produto" desc="Liderança estratégica para Frigelar e DPSP. Protocolos analíticos." icon={Terminal} /></ScrollReveal>
-               <ScrollReveal delay={0.2}><ExpCell id="02" entity="EINSTEIN" role="Inovação" desc="Consultoria de Inovação em saúde. Interfaces de alta resolução." icon={Search} /></ScrollReveal>
-               <ScrollReveal delay={0.3}><ExpCell id="03" entity="BRADESCO" role="Estrategista UX" desc="Escalabilidade em ecossistemas bancários de alta volumetria." icon={Activity} /></ScrollReveal>
-               <ScrollReveal delay={0.4}><ExpCell id="04" entity="LENOVO" role="Estratégia UX" desc="Design de experiência e inovação para hardware e serviços globais." icon={Pointer} /></ScrollReveal>
+            <section className={`col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-muted min-h-[400px] divide-y md:divide-y-0 md:divide-x divide-muted transition-colors ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+               <ScrollReveal delay={0.1}><ExpCell isDark={isDarkMode} id="01" entity="COMPASSO UOL" role="Líder de Produto" desc="Liderança estratégica para Frigelar e DPSP. Protocolos analíticos." icon={Terminal} /></ScrollReveal>
+               <ScrollReveal delay={0.2}><ExpCell isDark={isDarkMode} id="02" entity="EINSTEIN" role="Inovação" desc="Consultoria de Inovação em saúde. Interfaces de alta resolução." icon={Search} /></ScrollReveal>
+               <ScrollReveal delay={0.3}><ExpCell isDark={isDarkMode} id="03" entity="BRADESCO" role="Estrategista UX" desc="Escalabilidade em ecossistemas bancários de alta volumetria." icon={Activity} /></ScrollReveal>
+               <ScrollReveal delay={0.4}><ExpCell isDark={isDarkMode} id="04" entity="LENOVO" role="Estratégia UX" desc="Design de experiência e inovação para hardware e serviços globais." icon={Pointer} /></ScrollReveal>
             </section>
 
 
             {/* CONNECT_FOOTER: DIRECT CTA ARCHITECTURE — v1.3.0 */}
-            <footer id="connect" className="col-span-12 border-t border-muted bg-secondary text-ink">
+            <footer id="connect" className={`col-span-12 border-t border-muted transition-colors ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                {/* MIDDLE SECTION: CALL TO ACTION — v1.2.2 */}
                <div className="p-[var(--spacing-section)] md:p-24 flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
                   <div className="flex flex-col gap-8 flex-1">
                      <ScrollReveal>
-                        <h2 className="text-cta-footer font-display font-bold leading-[1.1] tracking-tighter uppercase max-w-[40ch]">
-                           Vamos conversar <br />
-                           sobre um projeto, <br />
-                           colaboração ou uma <br />
-                           ideia que você tenha?
+                        <h2 className={`text-4xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase max-w-none md:max-w-[40ch] ${isDarkMode ? "text-white" : "text-black"}`}>
+                           <AnimatedText text="Vamos conversar sobre um projeto, colaboração ou uma ideia que você tenha?" type="words" stagger={0.08} />
                         </h2>
+
                      </ScrollReveal>
                   </div>
                   <ScrollReveal delay={0.2}>
                      <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="flex gap-4 p-6 border border-muted bg-canvas/60 backdrop-blur-md cursor-pointer hover:bg-canvas transition-all shadow-sm group"
+                        className={`flex gap-4 p-6 border border-muted transition-all shadow-sm group ${isDarkMode ? "bg-white text-black hover:bg-black hover:text-white" : "bg-black text-white hover:bg-white hover:text-black"}`}
                      >
-                        <span className="font-mono text-[11px] uppercase tracking-[0.4em] font-bold">Enviar_Mensagem</span>
-                        <div className="w-3 h-3 bg-muted group-hover:bg-ink transition-colors" />
+                        <span className={`font-mono text-[11px] uppercase tracking-[0.4em] font-bold transition-colors ${isDarkMode ? "text-black group-hover:text-white" : "text-white group-hover:text-black"}`}>Enviar_Mensagem</span>
+                        <div className={`w-3 h-3 transition-colors ${isDarkMode ? "bg-black group-hover:bg-white" : "bg-white group-hover:bg-black"}`} />
                      </motion.button>
                   </ScrollReveal>
                </div>
@@ -483,20 +1024,20 @@ export default function WessPortfolio() {
                {/* BOTTOM SUB-FOOTER: METADATA & LINKS */}
                <div className="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 border-t border-muted text-[10px] font-mono tracking-widest opacity-40 uppercase">
                   <div className="md:col-span-4">
-                     ©2026 Todos os Direitos Reservados. Design & Codificação feito com emoção.
+                     ©2026 Design & Codificação feito com emoção.
                   </div>
                   <div className="md:col-span-6 flex gap-8 justify-center">
                      {[
                         { label: "LinkedIn", href: "#" },
                         { label: "Email", href: "mailto:contato@wess.design" },
                         { label: "O que faço quando não trabalho", href: "#" },
-                        { label: "DS_SYSTEM.V2", href: "/design-system" }
+                        { label: "DS_SYSTEM.V2", href: `${ASSET_PREFIX}/design-system` }
                      ].map(link => (
-                        <a key={link.label} href={link.href} className="hover:text-ink hover:line-through transition-all cursor-none">{link.label}</a>
+                        <a key={link.label} href={link.href} className={`hover:line-through transition-all cursor-none ${isDarkMode ? "hover:text-white" : "hover:text-ink"}`}>{link.label}</a>
                      ))}
                   </div>
                   <div className="md:col-span-2 text-right">
-                     <a href="#" className="hover:text-ink hover:translate-y-[-2px] inline-block transition-all">Voltar ao topo ↑</a>
+                     <a href="#" className={`hover:translate-y-[-2px] inline-block transition-all ${isDarkMode ? "hover:text-white text-white/40" : "hover:text-ink text-ink/40"}`}>Voltar ao topo ↑</a>
                   </div>
                </div>
             </footer>
@@ -505,17 +1046,6 @@ export default function WessPortfolio() {
    );
 }
 
-function TypewriterText({ text, className }: { text: string, className?: string }) {
-   return (
-      <h1 className={className}>
-         {text.split("").map((char, i) => (
-            <motion.span key={i} custom={i} variants={charVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="inline-block text-ink">
-               {char === " " ? "\u00A0" : char}
-            </motion.span>
-         ))}
-      </h1>
-   );
-}
 
 function StatusItem({ label, value }: { label: string, value: string }) {
    return (
@@ -526,19 +1056,19 @@ function StatusItem({ label, value }: { label: string, value: string }) {
    );
 }
 
-export function ExpCell({ id, entity, role, desc, icon: Icon }: { id: string, entity: string, role: string, desc: string, icon?: React.ElementType }) {
+export function ExpCell({ id, entity, role, desc, icon: Icon, isDark }: { id: string, entity: string, role: string, desc: string, icon?: React.ElementType, isDark?: boolean }) {
    return (
-      <div className="p-[var(--spacing-section)] border-t border-muted group hover:bg-canvas transition-colors flex flex-col h-full bg-surface-sunken/50 dark:bg-transparent">
+      <div className={`p-[var(--spacing-section)] border-t border-muted group hover:bg-canvas transition-colors flex flex-col h-full ${isDark ? "bg-black text-white" : "bg-white text-black"}`}>
          <div className="flex justify-between items-start mb-8">
-            <span className="font-mono text-[9px] opacity-20 tracking-[0.4em] uppercase font-bold">{id} // LOG_EXP</span>
-            {Icon && <Icon size={14} className="text-ink opacity-20 group-hover:opacity-100 transition-opacity" strokeWidth={1.5} />}
+            <span className="font-mono text-[9px] opacity-40 tracking-[0.4em] uppercase font-bold">{id} // LOG_DE_ENTREGAS</span>
+            {Icon && <Icon size={14} className={`opacity-20 group-hover:opacity-100 transition-opacity ${isDark ? "text-white" : "text-ink"}`} strokeWidth={1.5} />}
          </div>
          <div className="mt-auto space-y-4">
             <h4 className="font-mono text-[10px] uppercase opacity-40 tracking-[0.3em] group-hover:opacity-100 transition-opacity uppercase font-bold">{entity}</h4>
-            <h3 className="text-2xl font-display group-hover:translate-x-1 transition-transform tracking-tight uppercase font-bold text-ink">
+            <h3 className={`text-2xl font-display group-hover:translate-x-1 transition-transform tracking-tight uppercase font-bold ${isDark ? "text-white" : "text-ink"}`}>
                {role}
             </h3>
-            <p className="font-body text-xs text-ink-muted leading-relaxed transition-colors tracking-tight font-medium">
+            <p className={`font-body text-xs leading-relaxed transition-colors tracking-tight font-medium ${isDark ? "text-white/70" : "text-ink-muted"}`}>
                "{desc}"
             </p>
          </div>
@@ -552,7 +1082,8 @@ export function ScrollReveal({ children, delay = 0, className = "" }: { children
          initial={{ opacity: 0, y: 20 }}
          whileInView={{ opacity: 1, y: 0 }}
          viewport={{ once: true, margin: "-100px" }}
-         transition={{ duration: 0.8, delay, ease: [0.215, 0.61, 0.355, 1] }}
+         transition={{ duration: 0.8, delay, ease: [0.215, 0.61, 0.355, 1] as any }}
+
          className={className}
       >
          {children}
@@ -560,7 +1091,8 @@ export function ScrollReveal({ children, delay = 0, className = "" }: { children
    );
 }
 
-export function ProjectTile({ id, tag, title, img, details }: { id: string, tag: string, title: string, img: string, details: string }) {
+export function ProjectTile({ id, tag, title, img, details, isDark }: { id: string, tag: string, title: string, img: string, details: string, isDark?: boolean }) {
+
    const [isHovered, setIsHovered] = useState(false);
 
    return (
@@ -597,9 +1129,11 @@ export function ProjectTile({ id, tag, title, img, details }: { id: string, tag:
                         <MoveUpRight strokeWidth={1} size={20} className="text-ink" />
                      </div>
                   </div>
-                  <div className="flex-1 mb-[var(--spacing-8)] overflow-hidden border border-muted bg-canvas">
-                     <GlitchImage src={img} isHovered={true} />
+                  <div className={`flex-1 mb-[var(--spacing-8)] overflow-hidden border border-muted ${isDark ? "bg-black" : "bg-white"}`}>
+                     <GlitchImage src={img} isHovered={true} isDark={isDark ?? false} />
+
                   </div>
+
                   <p className="font-body text-sm leading-relaxed text-ink/70 font-medium">"{details}"</p>
                   <div className="grid grid-cols-2 gap-[var(--spacing-4)] pb-[var(--spacing-4)] border-t border-muted pt-[var(--spacing-8)] text-[9px] font-mono tracking-widest uppercase opacity-40 mt-auto font-bold">
                      <div className="flex flex-col gap-[var(--spacing-2)]"><span>ID_SISTEMA: {id}</span><span>CAMADA_SCAN: ALTA</span></div>
