@@ -8,6 +8,7 @@ import {
    MousePointer2, Eye, Target, Fingerprint, Activity, Pointer
 } from "lucide-react";
 import { ProjectRow, ExpCell, ProjectTile, HUDCursor } from "../PortfolioView";
+import { withPrefix } from "../utils/paths";
 
 export default function DesignSystemPage() {
    const [mounted, setMounted] = useState(false);
@@ -79,7 +80,7 @@ export default function DesignSystemPage() {
                   {theme === "light" ? <Moon size={14} /> : <Sun size={14} />}
                   MODO_{theme === "light" ? "ESCURO" : "CLARO"}
                </button>
-               <a href="/" className="font-mono text-[10px] uppercase tracking-widest hover:line-through transition-all">VOLTAR_AO_PORTFOLIO</a>
+               <a href={withPrefix("/")} className="font-mono text-[10px] uppercase tracking-widest hover:line-through transition-all">VOLTAR_AO_PORTFOLIO</a>
             </nav>
          </header>
 

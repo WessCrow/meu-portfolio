@@ -18,8 +18,7 @@ import {
  * Protocolo: Revelação escalonada para máxima fidelidade visual
  */
 
-const BASE_PATH = "/meu-portfolio";
-const ASSET_PREFIX = process.env.NODE_ENV === 'production' ? BASE_PATH : '';
+import { withPrefix } from "./utils/paths";
 
 export function AnimatedText({
    text,
@@ -191,7 +190,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
    const [rawBitmap, setRawBitmap] = useState<string | null>(null);
 
    useEffect(() => {
-      fetch(`${ASSET_PREFIX}/img/wess_tron_raw.txt`)
+      fetch(withPrefix("/img/wess_tron_raw.txt"))
          .then(res => res.text())
          .then(text => setRawBitmap(text.trim()))
          .catch(err => console.error("Failed to load Tron ASCII raw data", err));
@@ -774,7 +773,7 @@ export default function WessPortfolio() {
          <header className={`fixed top-0 left-0 w-full z-[80] border-b border-muted transition-colors px-6 md:px-8 h-[53px] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] font-medium ${isDarkMode ? "bg-black/90 text-white backdrop-blur-md" : "bg-white text-black"}`}>
             {/* LOGO */}
             <div className="flex items-center gap-6">
-               <div className={`w-[28px] h-[28px] bg-ink grayscale transition-opacity ${isDarkMode ? "opacity-100" : "opacity-60"}`} style={{ maskImage: `url(${ASSET_PREFIX}/logo_black.svg)`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' }} />
+               <div className={`w-[28px] h-[28px] bg-ink grayscale transition-opacity ${isDarkMode ? "opacity-100" : "opacity-60"}`} style={{ maskImage: `url(${withPrefix("/logo_black.svg")})`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' }} />
                <div className="hidden md:flex items-center gap-2">
                   <span className="opacity-30 tracking-widest uppercase">Wess // PROJETANDO DESDE 2008</span>
                </div>
@@ -1031,7 +1030,7 @@ export default function WessPortfolio() {
                         { label: "LinkedIn", href: "#" },
                         { label: "Email", href: "mailto:contato@wess.design" },
                         { label: "O que faço quando não trabalho", href: "#" },
-                        { label: "DS_SYSTEM.V2", href: `${ASSET_PREFIX}/design-system` }
+                        { label: "DS_SYSTEM.V2", href: withPrefix("/design-system") }
                      ].map(link => (
                         <a key={link.label} href={link.href} className={`hover:line-through transition-all cursor-none ${isDarkMode ? "hover:text-white" : "hover:text-ink"}`}>{link.label}</a>
                      ))}

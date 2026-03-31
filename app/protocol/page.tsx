@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { GlitchImage, ProjectRow, ExpCell } from "../PortfolioView";
+import { withPrefix } from "../utils/paths";
 
 export default function ProtocolPage() {
    const [isHovered, setIsHovered] = useState(false);
@@ -17,7 +18,7 @@ export default function ProtocolPage() {
                <span className="font-mono text-[10px] uppercase tracking-[0.4em] opacity-30 italic">v26.2 // DESIGN_PROTOCOLS</span>
                <h1 className="text-6xl font-display font-bold tracking-tighter uppercase mt-4">Wess Storybook.</h1>
             </div>
-            <a href="/" className="font-mono text-[10px] hover:line-through opacity-50">Voltar ao Portfólio ↑</a>
+            <a href={withPrefix("/")} className="font-mono text-[10px] hover:line-through opacity-50">Voltar ao Portfólio ↑</a>
          </header>
 
          <main className="space-y-32">
