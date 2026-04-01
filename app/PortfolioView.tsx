@@ -837,28 +837,22 @@ export default function WessPortfolio() {
 
 
    useEffect(() => {
-      // Theme initialization - Force Dark as default
-      const savedTheme = localStorage.getItem("wess-theme");
-      if (savedTheme === "light") {
-         setIsDarkMode(false);
-         document.documentElement.classList.remove("dark");
-      } else {
-         setIsDarkMode(true);
-         document.documentElement.classList.add("dark");
-         localStorage.setItem("wess-theme", "dark");
-      }
+      // FORCE DARK MODE BY DEFAULT - CLEAR PREVIOUS SESSION STATE
+      setIsDarkMode(true);
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("wess-theme", "dark");
    }, []);
 
    // Handle Case Study Theme Isolation
    useEffect(() => {
       if (activeCase) {
-         // Force light mode on document level for Case Studies
+         // Force light mode on document level ONLY for Case Studies
          document.documentElement.classList.remove("dark");
-      } else if (isDarkMode) {
-         // Restore dark mode if active
+      } else {
+         // Landing page is ALWAYS dark by standard
          document.documentElement.classList.add("dark");
       }
-   }, [activeCase, isDarkMode]);
+   }, [activeCase]);
 
    const toggleTheme = () => {
       const newTheme = !isDarkMode;
