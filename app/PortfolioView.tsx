@@ -837,7 +837,7 @@ export default function WessPortfolio() {
 
 
    useEffect(() => {
-      // Theme initialization
+      // Theme initialization - Force Dark as default
       const savedTheme = localStorage.getItem("wess-theme");
       if (savedTheme === "light") {
          setIsDarkMode(false);
@@ -845,8 +845,20 @@ export default function WessPortfolio() {
       } else {
          setIsDarkMode(true);
          document.documentElement.classList.add("dark");
+         localStorage.setItem("wess-theme", "dark");
       }
    }, []);
+
+   // Handle Case Study Theme Isolation
+   useEffect(() => {
+      if (activeCase) {
+         // Force light mode on document level for Case Studies
+         document.documentElement.classList.remove("dark");
+      } else if (isDarkMode) {
+         // Restore dark mode if active
+         document.documentElement.classList.add("dark");
+      }
+   }, [activeCase, isDarkMode]);
 
    const toggleTheme = () => {
       const newTheme = !isDarkMode;
@@ -1079,13 +1091,13 @@ export default function WessPortfolio() {
                <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                   <div className="md:col-span-3 p-[var(--spacing-section)] border-r border-muted flex items-center">
                      <ScrollReveal>
-                        <span className={`font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-bold ${isDarkMode ? "text-white" : "text-black"}`}>003 // LOGS_EXPERIÊNCIA</span>
+                        <span className={`font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-bold ${isDarkMode ? "text-white" : "text-black"}`}>003 // LOGS_EXPERIÊNCIAS</span>
                      </ScrollReveal>
                   </div>
                   <div className="md:col-span-9 p-[var(--spacing-section)]">
                      <ScrollReveal delay={0.1}>
                         <h2 className={`text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                           <ShuffleText text="LOG_DE_XP" delay={0.15} speed={25} />
+                           <ShuffleText text="ÚLTIMOS_LOGS" delay={0.15} speed={25} />
                         </h2>
 
                      </ScrollReveal>
