@@ -18,7 +18,9 @@ import {
  * Protocolo: Revelação escalonada para máxima fidelidade visual
  */
 
+export { withPrefix } from "./utils/paths";
 import { withPrefix } from "./utils/paths";
+import CaseStudyView from "./CaseStudyView";
 
 export function AnimatedText({
    text,
@@ -166,28 +168,77 @@ const CLIENTS = [
    "ACSC"
 ];
 
-export function GlitchImage({ src, isHovered, isDark = false }: { src: string, isHovered: boolean, isDark?: boolean }) {
-
+export function GlitchImage({ src, isHovered, isDark = false, isTransparent = false, objectFit = "cover" }: { src: string, isHovered: boolean, isDark?: boolean, isTransparent?: boolean, objectFit?: "cover" | "contain" }) {
    return (
-      <div className={`relative w-full h-full overflow-hidden ${isDark ? "bg-black" : "bg-white"}`}>
+      <div className={`relative w-full h-full ${!isTransparent ? "overflow-hidden" : "overflow-visible"} ${!isTransparent ? (isDark ? "bg-black" : "bg-white") : "bg-transparent"}`}>
          <img
             src={src}
             alt="Preview"
-            className={`w-full h-full object-cover grayscale transition-all duration-700 ease-out ${isHovered ? 'scale-110 brightness-[1.1] grayscale-0' : 'scale-100 grayscale'}`}
+            className={`w-full h-full grayscale transition-all duration-700 ease-out ${objectFit === "cover" ? "object-cover" : "object-contain"} ${isHovered ? 'brightness-[1.1] grayscale-0' : 'scale-100 grayscale'}`}
          />
       </div>
    );
 }
 
+const TypewriterText = ({ text, delay = 0, className = "" }: { text: string, delay?: number, className?: string }) => {
+   const [displayedText, setDisplayedText] = useState("");
+   const [showCursor, setShowCursor] = useState(true);
+
+   useEffect(() => {
+      let timeoutId: number;
+
+      const startTyping = () => {
+         let currentText = "";
+         let i = 0;
+
+         const typeNextChar = () => {
+            if (i < text.length) {
+               currentText += text.charAt(i);
+               setDisplayedText(currentText);
+               i++;
+               timeoutId = window.setTimeout(typeNextChar, Math.random() * 50 + 30);
+            }
+         };
+
+         typeNextChar();
+      };
+
+      timeoutId = window.setTimeout(startTyping, delay * 1000);
+
+      return () => window.clearTimeout(timeoutId);
+   }, [text, delay]);
+
+   useEffect(() => {
+      const cursorInterval = window.setInterval(() => {
+         setShowCursor(prev => !prev);
+      }, 500);
+      return () => window.clearInterval(cursorInterval);
+   }, []);
+
+   return (
+      <div className={`font-mono uppercase tracking-widest font-bold whitespace-pre-line leading-relaxed ${className}`}>
+         {displayedText}
+         <span className={`inline-block w-2 ml-1 bg-current transition-opacity align-bottom mb-[2px] ${showCursor ? 'opacity-100' : 'opacity-0'}`}>&nbsp;</span>
+      </div>
+   );
+};
+
 /**
  * TRON_HERO [COMPONENT_V4.0]
  * Dual-canvas | Particle physics | Magnetic Cursor | Ambient Clusters
  */
-export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef: React.RefObject<HTMLDivElement | null> }) {
+export function TronHero({ isDarkMode, heroRef, cursorXSpring, cursorYSpring }: { isDarkMode: boolean; heroRef: React.RefObject<HTMLDivElement | null>; cursorXSpring?: any; cursorYSpring?: any }) {
    const containerRef = useRef<HTMLDivElement>(null);
    const bgCanvasRef = useRef<HTMLCanvasElement>(null);
    const mainCanvasRef = useRef<HTMLCanvasElement>(null);
    const [rawBitmap, setRawBitmap] = useState<string | null>(null);
+
+   const dummyX = useMotionValue(0);
+   const dummyY = useMotionValue(0);
+   const parallaxX1 = useTransform(cursorXSpring || dummyX, [0, 1920], [8, -8]);
+   const parallaxY1 = useTransform(cursorYSpring || dummyY, [0, 1080], [8, -8]);
+   const parallaxX2 = useTransform(cursorXSpring || dummyX, [0, 1920], [15, -15]);
+   const parallaxY2 = useTransform(cursorYSpring || dummyY, [0, 1080], [15, -15]);
 
    useEffect(() => {
       fetch(withPrefix("/img/wess_tron_raw.txt"))
@@ -214,10 +265,10 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
       const CHAR_W = FONT_PX * 0.60;
       const CHAR_H = FONT_PX * 1.12;
       const PAD = 16;
-      
+
       const mainW = Math.floor(COLS * CHAR_W + PAD * 2);
       const mainH = Math.floor(ROWS * CHAR_H + PAD * 2);
-      
+
       mainCanvas.width = mainW * dpr;
       mainCanvas.height = mainH * dpr;
       mainCtx.scale(dpr, dpr);
@@ -243,18 +294,18 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
       const bitmap = new Uint8Array(N);
 
       const POOLS = [
-         '', 
-         '. , -', 
-         ': ; ~ +', 
-         'x X = * %', 
+         '',
+         '. , -',
+         ': ; ~ +',
+         'x X = * %',
          '# @ W 8 B M &'
       ];
       const chars = new Array(N).fill('');
-      const rc = (lv: number) => { 
-         const p = POOLS[lv]; 
+      const rc = (lv: number) => {
+         const p = POOLS[lv];
          if (!p) return '';
          const opts = p.replace(/ /g, '');
-         return opts[Math.floor(Math.random() * opts.length)] || ''; 
+         return opts[Math.floor(Math.random() * opts.length)] || '';
       };
 
       for (let i = 0; i < N; i++) {
@@ -269,7 +320,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
             oy[i] = y;
             px[i] = x;
             py[i] = y;
-            
+
             aOff[i] = Math.random() * Math.PI * 2;
             chars[i] = rc(lv);
          }
@@ -280,7 +331,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
       let lastMouseX = -1000;  // Track if mouse is moving
       let lastMouseY = -1000;
       let isHover = false;
-      const trailPoints: {x: number, y: number, age: number}[] = [];
+      const trailPoints: { x: number, y: number, age: number }[] = [];
       const MAX_TRAIL_AGE = 50; // The length of the brush stroke "tail"
 
       const handleMove = (e: MouseEvent) => {
@@ -292,7 +343,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
          const displayH = mainH * scale;
          const offsetX = (rect.width - displayW) / 2;
          const offsetY = (rect.height - displayH) / 2;
-         
+
          mouseX = (e.clientX - rect.left - offsetX) / scale;
          mouseY = (e.clientY - rect.top - offsetY) / scale;
          isHover = true;
@@ -313,7 +364,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
          { nx: 0.96, ny: 0.50 },  // MR (Right Aligned)
          { nx: 0.96, ny: 0.82 },  // BR (Right Aligned)
       ];
-      
+
       const SKILLS = [
          '<p class="skills-line">\n  AI Engineer\n  UX Research\n  Behavioral Analysis\n  Data-Driven Insights\n  Human-Centered Design\n</p>',
          '<p class="skills-line">\n  UI Designer\n  Design Systems\n  Visual Architecture\n  Interaction Design\n  Accessibility\n</p>',
@@ -339,7 +390,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
          holdDuration: number;
          alpha: number;
 
-         constructor(zone: {nx: number, ny: number}, canvasW: number, canvasH: number) {
+         constructor(zone: { nx: number, ny: number }, canvasW: number, canvasH: number) {
             this.x = zone.nx * canvasW;
             this.y = zone.ny * canvasH;
             this.full = makeLines().join('\n');
@@ -348,10 +399,10 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
             this.state = 'typing';
             this.typeDelay = 0;
             this.holdTimer = 0;
-            this.typeSpeed = 5; // Slow typing
-            this.deleteSpeed = 3; // Slow delete
+            this.typeSpeed = 10 + Math.floor(Math.random() * 15);
+            this.deleteSpeed = 5 + Math.floor(Math.random() * 10);
             this.holdDuration = 360; // Hold much longer
-            this.alpha = 0.95; // High contrast
+            this.alpha = 0.2; // 20% opacity (mais apagado)
          }
 
          tick() {
@@ -383,18 +434,18 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
          draw(ctx: CanvasRenderingContext2D, mainScale: number = 1.0) {
             const lines = this.full.slice(0, this.visible).split('\n');
             const blink = Math.floor(Date.now() / 400) % 2 === 0;
-            const size = (FONT_PX * 0.90) * mainScale; 
+            const size = (FONT_PX * 0.90) * mainScale;
             // Match exactly Geist Mono
-            ctx.font = `bold ${size}px "Geist Mono", monospace`; 
-            
-            const baseC = isDarkMode ? 160 : 70; // Darker text in Light Mode
-            ctx.fillStyle = `rgba(${baseC}, ${baseC}, ${baseC}, ${this.alpha * 0.8})`; 
-            
+            ctx.font = `bold ${size}px "Geist Mono", monospace`;
+
+            const baseC = isDarkMode ? 255 : 0; // Pure white/black for base before alpha
+            ctx.fillStyle = `rgba(${baseC}, ${baseC}, ${baseC}, ${this.alpha})`;
+
             // Right-align text if it's placed on the right side of the screen (e.g nx > 0.5)
             // ctx.canvas.width is the physical width, our this.x is logical.
             const isRightSide = this.x > (ctx.canvas.width / window.devicePixelRatio) / 2;
             ctx.textAlign = isRightSide ? 'right' : 'left';
-            
+
             lines.forEach((row, li) => {
                const isLast = (li === lines.length - 1);
                const text = row + (isLast && this.state !== 'hold' && blink ? '█' : '');
@@ -412,7 +463,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
       let clusterFrames = 0;
 
       // Massive interaction radius for space dust
-      const RADIUS = 380; 
+      const RADIUS = 380;
       const RCX = RADIUS / CHAR_W;
       const RCY = RADIUS / CHAR_H;
 
@@ -432,12 +483,12 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
             if (clusters.length < targetCount && Math.random() < 0.6) {
                const zIndex = Math.floor(Math.random() * ZONES.length);
                const z = ZONES[zIndex]!;
-               
+
                // Validação de colisão de zona (Impede texto encavalar)
                const px = z.nx * (bgCanvas.width / dpr);
                const py = z.ny * (bgCanvas.height / dpr);
-               const isOccupied = clusters.some(c => 
-                  Math.abs(c.x - px) < 1 && 
+               const isOccupied = clusters.some(c =>
+                  Math.abs(c.x - px) < 1 &&
                   Math.abs(c.y - py) < 1
                );
 
@@ -471,7 +522,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
             lastMouseX = mouseX;
             lastMouseY = mouseY;
          }
-         
+
          // Age and prune the trail
          for (let i = trailPoints.length - 1; i >= 0; i--) {
             trailPoints[i].age++;
@@ -482,12 +533,12 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
 
          // ASCII Breathing effect
          if (frame % 9 === 0) {
-             const toSwap = Math.floor(N * 0.012);
-             for(let k=0; k<toSwap; k++) {
-                 const idx = Math.floor(Math.random() * N);
-                 const lv = bitmap[idx];
-                 if (lv !== undefined && lv > 0) chars[idx] = rc(lv);
-             }
+            const toSwap = Math.floor(N * 0.012);
+            for (let k = 0; k < toSwap; k++) {
+               const idx = Math.floor(Math.random() * N);
+               const lv = bitmap[idx];
+               if (lv !== undefined && lv > 0) chars[idx] = rc(lv);
+            }
          }
 
          for (let i = 0; i < N; i++) {
@@ -509,11 +560,11 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
                   const penetration = radius - dist;
                   const pushX = (dx / dist) * penetration;
                   const pushY = (dy / dist) * penetration;
-                  
+
                   // Immediately snap to the edge of the rigid body
                   px[i] += pushX * 0.8;
                   py[i] += pushY * 0.8;
-                  
+
                   // Also add physical velocity so they float elastically outward from the stack
                   vx[i] += pushX * 0.15;
                   vy[i] += pushY * 0.15;
@@ -522,7 +573,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
 
             if (px[i]! < -12 || px[i]! > mainW + 12) continue;
 
-            const disp = Math.sqrt((px[i] - ox[i])**2 + (py[i] - oy[i])**2);
+            const disp = Math.sqrt((px[i] - ox[i]) ** 2 + (py[i] - oy[i]) ** 2);
 
             // Space Dust Fluid Spring Physics
             // Higher friction and slower spring creates the liquid re-filling effect
@@ -530,23 +581,23 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
             vy[i] += (oy[i]! - py[i]!) * 0.016;
             vx[i] *= 0.84;
             vy[i] *= 0.84;
-            
+
             px[i] += vx[i]!;
             py[i] += vy[i]!;
 
             // Space Dust Grayscale Colors - Maximum Contrast & Detail Rule
             const lv = bitmap[i]!;
-            
+
             // Explicit contrast steps instead of linear math
             let b = 0;
             if (lv === 4) b = 255;
             else if (lv === 3) b = 190;
             else if (lv === 2) b = 130;
             else b = 70;
-            
+
             // Fade out smoothly based on displacement (particles fly away)
             const fade = Math.max(0, 1 - (disp / 90));
-            if (fade <= 0.01) continue; 
+            if (fade <= 0.01) continue;
 
             // White dust on Dark Mode, Dark dust on Light Mode
             let dustColor;
@@ -555,7 +606,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
             } else {
                dustColor = disp < 1.0 ? (255 - b) : Math.max(0, (255 - b) - disp * 2.0);
             }
-            
+
             // Keep alpha at 1.0 when resting for max detail, otherwise fade the 'trail' slightly
             const alpha = disp < 0.5 ? 1.0 : (0.5 + 0.5 * fade);
 
@@ -585,7 +636,7 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
          className={`absolute inset-0 overflow-hidden flex items-center justify-center transition-colors duration-1000 select-none ${isDarkMode ? "bg-[#060606]" : "bg-white"}`}
       >
          <canvas ref={bgCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
-         
+
          {/* HERO DOT-GRID BACKGROUND */}
          <div
             className="absolute inset-0 pointer-events-none z-0"
@@ -597,10 +648,77 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
 
          {/* Main container keeps aspect ratio centered */}
          <div className={`relative w-full h-full flex items-center justify-center overflow-hidden pointer-events-none ${isDarkMode ? "mix-blend-screen" : "mix-blend-multiply"}`}>
-            <canvas 
-               ref={mainCanvasRef} 
-               className="relative z-10 cursor-none w-full h-full object-cover pointer-events-auto" 
+            <canvas
+               ref={mainCanvasRef}
+               className="relative z-10 cursor-none w-full h-full object-cover pointer-events-auto scale-[1.2] origin-bottom md:origin-center opacity-50"
             />
+         </div>
+
+         {/* UI OVERLAYS */}
+         <div className="absolute inset-0 pointer-events-none z-20 flex flex-col justify-center items-center md:flex-row md:justify-between w-full max-w-[1920px] mx-auto px-6 md:px-16 lg:px-32 xl:px-48">
+            {/* Left Overlay */}
+            <motion.div style={{ x: parallaxX1, y: parallaxY1 }} className="flex flex-col w-full md:w-auto">
+               <div className={`flex flex-col items-center md:items-start text-center md:text-left gap-4 md:gap-6 ${isDarkMode ? "text-white" : "text-black"} md:-translate-x-[20%]`}>
+                  <motion.span
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: 0.2, duration: 0.8 }}
+                     className="font-mono  font-bold text-[10px] md:text-xs lg:text-sm tracking-[0.2em]"
+                  >
+                     Bem-vindo! eu sou o
+                  </motion.span>
+                  <motion.img
+                     initial={{ opacity: 0, filter: "blur(10px)", scale: 1.1 }}
+                     animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+                     transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
+                     src={withPrefix("/img/logo_wess.svg")}
+                     alt="Wess Logo"
+                     className={`w-[260px] md:w-[330px] lg:w-[700px] object-contain ${!isDarkMode ? "invert" : ""}`}
+                  />
+                  <motion.p
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: 0.5, duration: 1 }}
+                     className="font-body text-xs md:text-sm lg:text-base opacity-60 max-w-[320px] md:max-w-[700px] leading-relaxed font-medium hidden md:block"
+                  >
+                     Designer estratégico com 18 anos de bagagem em ux e produtos digitais, entrego interfaces de alta resolução para serviços memoraveis.
+                  </motion.p>
+
+                  <motion.button
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: 0.6, duration: 1 }}
+                     whileHover={{ scale: 1.02 }}
+                     whileTap={{ scale: 0.98 }}
+                     onClick={() => window.location.href = "mailto:contato@wess.design"}
+                     className={`md:hidden flex gap-4 p-4 border border-muted transition-all shadow-sm group mt-4 ${isDarkMode ? "bg-white text-black hover:bg-black hover:text-white" : "bg-black text-white hover:bg-white hover:text-black"}`}
+                  >
+                     <span className={`font-mono text-[10px] uppercase tracking-[0.4em] font-bold transition-colors ${isDarkMode ? "text-black group-hover:text-white" : "text-white group-hover:text-black"}`}>Enviar_Mensagem</span>
+                     <div className={`w-2.5 h-2.5 transition-colors ${isDarkMode ? "bg-black group-hover:bg-white" : "bg-white group-hover:bg-black"}`} />
+                  </motion.button>
+                  <motion.button
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: 0.6, duration: 1 }}
+                     whileHover={{ scale: 1.02 }}
+                     whileTap={{ scale: 0.98 }}
+                     onClick={() => window.location.href = "mailto:contato@wess.design"}
+                     className={`md:hidden flex gap-4 p-4 border border-muted transition-all shadow-sm group mt-4 ${isDarkMode ? "bg-white text-black hover:bg-black hover:text-white" : "bg-black text-white hover:bg-white hover:text-black"}`}
+                  >
+                     <span className={`font-mono text-[10px] uppercase tracking-[0.4em] font-bold transition-colors ${isDarkMode ? "text-black group-hover:text-white" : "text-white group-hover:text-black"}`}>D</span>
+                     <div className={`w-2.5 h-2.5 transition-colors ${isDarkMode ? "bg-black group-hover:bg-white" : "bg-white group-hover:bg-black"}`} />
+                  </motion.button>
+               </div>
+            </motion.div>
+
+            {/* Right Overlay - REMOVED AS REQUESTED */}
+            {false && (
+               <motion.div style={{ x: parallaxX2, y: parallaxY2 }} className="hidden md:flex flex-col w-full md:w-auto">
+                  <div className={`flex flex-col items-center ${isDarkMode ? "text-white" : "text-[rgba(0,0,0,0.7)]"} md:-translate-x-[50%] lg:-translate-x-[100%] translate-y-[5%]`}>
+                     <TypewriterText text={`INICIALIZANDO\nTERMINAL DE\nPROJETOS...`} delay={0.8} className="text-[9px] md:text-xs tracking-[0.2em] text-center" />
+                  </div>
+               </motion.div>
+            )}
          </div>
       </div>
    );
@@ -611,17 +729,19 @@ export function TronHero({ isDarkMode, heroRef }: { isDarkMode: boolean; heroRef
 export function HUDCursor({
    isHoveringClickable,
    cursorXSpring,
-   cursorYSpring
+   cursorYSpring,
+   activeCase
 }: {
    isHoveringClickable: boolean;
    cursorXSpring: any;
    cursorYSpring: any;
+   activeCase: string | null;
 }) {
    return (
       <div className="fixed inset-0 pointer-events-none z-[9999]">
          {/* AXIS LINES */}
-         <motion.div style={{ y: cursorYSpring }} className="absolute left-0 w-full h-[1px] bg-muted opacity-30" />
-         <motion.div style={{ x: cursorXSpring }} className="absolute top-0 h-full w-[1px] bg-muted opacity-30" />
+         <motion.div style={{ y: cursorYSpring }} className={`absolute left-0 w-full h-[1px] ${activeCase ? "bg-black/20" : "bg-white opacity-40 mix-blend-difference"}`} />
+         <motion.div style={{ x: cursorXSpring }} className={`absolute top-0 h-full w-[1px] ${activeCase ? "bg-black/20" : "bg-white opacity-40 mix-blend-difference"}`} />
 
          {/* TERMINAL SIGHT */}
          <motion.div
@@ -634,23 +754,24 @@ export function HUDCursor({
                   backgroundColor: "transparent"
                }}
                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-               className="relative w-6 h-6 rounded-full border border-white flex items-center justify-center mix-blend-difference"
+               className={`relative w-6 h-6 rounded-full border-[1px] flex items-center justify-center ${activeCase ? "border-black/40" : "border-white mix-blend-difference"}`}
             >
-               <div className="absolute w-[40%] h-[1px] bg-white transition-colors duration-200" />
-               <div className="absolute h-[40%] w-[1px] bg-white transition-colors duration-200" />
+               <div className={`absolute w-[40%] h-[1px] transition-colors duration-200 ${activeCase ? "bg-black/40" : "bg-white"}`} />
+               <div className={`absolute h-[40%] w-[1px] transition-colors duration-200 ${activeCase ? "bg-black/40" : "bg-white"}`} />
             </motion.div>
          </motion.div>
       </div>
    );
 }
 
-export function ProjectRow({ step, title, desc, img, isDark, icon: Icon }: { step: string, title: string, desc: string, img: string, isDark?: boolean, icon?: React.ElementType }) {
+export function ProjectRow({ step, title, desc, img, isDark, icon: Icon, onClick }: { step: string, title: string, desc: string, img: string, isDark?: boolean, icon?: React.ElementType, onClick?: () => void }) {
    const [isHovered, setIsHovered] = useState(false);
 
    return (
       <motion.div
          onMouseEnter={() => setIsHovered(true)}
          onMouseLeave={() => setIsHovered(false)}
+         onClick={onClick}
          whileHover={{ zIndex: 50, transition: { duration: 0 } }}
          className="grid grid-cols-1 md:grid-cols-12 border-b border-muted p-[var(--spacing-section)] items-center group cursor-pointer hover:bg-surface-sunken transition-colors relative"
       >
@@ -669,17 +790,23 @@ export function ProjectRow({ step, title, desc, img, isDark, icon: Icon }: { ste
             <AnimatePresence>
                {isHovered && (
                   <motion.div
-                     initial={{ opacity: 0, scale: 0.9, x: -20 }}
-                     animate={{ opacity: 1, scale: 1, x: 0 }}
-                     exit={{ opacity: 0, scale: 0.9, x: -20 }}
-                     className="absolute right-32 top-1/2 -translate-y-1/2 w-48 h-64 z-50 pointer-events-none hidden lg:block"
+                     initial={{ opacity: 0, scale: 0.7, y: 40, rotateX: 15 }}
+                     animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
+                     exit={{ opacity: 0, scale: 0.7, y: 40, rotateX: 15 }}
+                     transition={{ type: "spring", stiffness: 260, damping: 25 }}
+                     className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[360px] h-[360px] z-50 pointer-events-none hidden lg:block"
                   >
-                     <div className="w-full h-full border border-muted shadow-[0_30px_60px_rgba(0,0,0,0.1)] overflow-hidden bg-surface p-[var(--spacing-2)]">
-                        <GlitchImage src={img} isHovered={isHovered} isDark={isDark ?? false} />
-
+                     <div className="w-full h-full bg-transparent overflow-visible">
+                        <GlitchImage
+                           src={img}
+                           isHovered={isHovered}
+                           isDark={isDark ?? false}
+                           isTransparent={true}
+                           objectFit="contain"
+                        />
                      </div>
-                     <div className="absolute -bottom-6 left-0">
-                        <span className="font-mono text-[8px] opacity-40 uppercase tracking-widest bg-muted text-on-dark px-1 font-bold">Case_V26_ID_{step}</span>
+                     <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center">
+                        <span className="font-mono text-[10px] opacity-40 uppercase tracking-widest bg-muted text-on-dark px-2 py-1 font-bold whitespace-nowrap">Protocolo_H_Fidelity_Case_{step}</span>
                      </div>
                   </motion.div>
                )}
@@ -698,9 +825,12 @@ export function ProjectRow({ step, title, desc, img, isDark, icon: Icon }: { ste
 
 export default function WessPortfolio() {
    const [isMounted, setIsMounted] = useState(false);
+   const [isLoading, setIsLoading] = useState(true);
    const [isDarkMode, setIsDarkMode] = useState(true);
    const [isMenuOpen, setIsMenuOpen] = useState(false);
    const [isHoveringClickable, setIsHoveringClickable] = useState(false);
+   const [isScrolled, setIsScrolled] = useState(false);
+   const [activeCase, setActiveCase] = useState<string | null>(null);
    const cursorX = useMotionValue(-100);
    const cursorY = useMotionValue(-100);
    const heroRef = useRef<HTMLDivElement>(null);
@@ -753,11 +883,17 @@ export default function WessPortfolio() {
          setIsHoveringClickable(!!isClickable);
       };
 
+      const handleScroll = () => {
+         setIsScrolled(window.scrollY > 20);
+      };
+
       window.addEventListener("mousemove", moveCursor);
       window.addEventListener("mouseover", handleMouseOver);
+      window.addEventListener("scroll", handleScroll);
       return () => {
          window.removeEventListener("mousemove", moveCursor);
          window.removeEventListener("mouseover", handleMouseOver);
+         window.removeEventListener("scroll", handleScroll);
       };
    }, []);
 
@@ -767,52 +903,35 @@ export default function WessPortfolio() {
 
    return (
       <div className={`relative min-h-screen overflow-x-hidden selection:bg-ink selection:text-canvas cursor-none transition-colors duration-1000 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-         <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} />
+         <AnimatePresence>
+            {isLoading && <LiquidLoader onComplete={() => setIsLoading(false)} isDarkMode={isDarkMode} />}
+         </AnimatePresence>
+         <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} activeCase={activeCase} />
 
          {/* HEADER PROTOCOL (0.7.1) */}
-         <header className={`fixed top-0 left-0 w-full z-[80] border-b border-muted transition-colors px-6 md:px-8 h-[53px] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] font-medium ${isDarkMode ? "bg-black/90 text-white backdrop-blur-md" : "bg-white text-black"}`}>
+         <header className={`fixed top-0 left-0 w-full z-[80] border-b border-muted transition-colors px-6 md:px-8 h-[53px] flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] font-normal ${isDarkMode ? "bg-black/90 text-white backdrop-blur-md" : "bg-white text-black"}`}>
             {/* LOGO */}
             <div className="flex items-center gap-6">
-               <div className={`w-[28px] h-[28px] bg-ink grayscale transition-opacity ${isDarkMode ? "opacity-100" : "opacity-60"}`} style={{ maskImage: `url(${withPrefix("/logo_black.svg")})`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' }} />
-               <div className="hidden md:flex items-center gap-2">
-                  <span className="opacity-30 tracking-widest uppercase">Wess // PROJETANDO DESDE 2008</span>
+               <div className={`transition-all duration-500 overflow-hidden flex items-center ${!isScrolled ? 'w-0 opacity-0 -ml-6' : 'w-[28px] opacity-100'}`}>
+                  <div className={`w-[28px] h-[28px] bg-ink grayscale shrink-0 ${isDarkMode ? "opacity-100" : "opacity-60"}`} style={{ maskImage: `url(${withPrefix("/logo_black.svg")})`, maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' }} />
+               </div>
+               <div className="flex items-center gap-2">
+                  <span className="hidden md:inline opacity-50 tracking-widest uppercase text-white drop-shadow-md">Wess // Soluções em design que conectam usuários e negócios desde 2008.</span>
+                  <span className="md:hidden opacity-50 tracking-widest uppercase text-white drop-shadow-md">Wess // Projetando desde 2008.</span>
                </div>
             </div>
 
             {/* DESKTOP NAV */}
-            <div className="hidden md:flex items-center gap-10">
+            <div className={`hidden md:flex items-center gap-10 transition-all duration-500 overflow-hidden ${!isScrolled ? 'opacity-0 translate-y-[-10px] pointer-events-none' : 'opacity-100 translate-y-0'}`}>
                {(
                   [["cases", "PROJETOS"], ["experience", "EXPERIÊNCIA"], ["connect", "CONTATO"]] as const
                ).map(([anchor, label]) => (
-                  <a key={anchor} href={`#${anchor}`} className="hover:line-through transition-all opacity-40 hover:opacity-100">{label}</a>
+                  <a key={anchor} href={`#${anchor}`} className="hover:line-through transition-all opacity-90 hover:opacity-100 text-white drop-shadow-md">{label}</a>
                ))}
-               <div className="flex items-center gap-3 border-l border-muted pl-10">
-                  <span className="opacity-20 uppercase text-[8px] font-medium">Modo_Escuro</span>
-                  <button
-                     onClick={toggleTheme}
-                     className="w-8 h-4 bg-ink/10 relative rounded-full p-[2px] cursor-none hover:bg-ink/20 transition-colors"
-                  >
-                     <motion.div
-                        animate={{ x: isDarkMode ? 16 : 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                        className="w-3 h-3 bg-ink rounded-full"
-                     />
-                  </button>
-               </div>
             </div>
 
-            {/* MOBILE RIGHT: THEME TOGGLE + HAMBURGER */}
+            {/* MOBILE RIGHT: HAMBURGER */}
             <div className="flex md:hidden items-center gap-4">
-               <button
-                  onClick={toggleTheme}
-                  className="w-8 h-4 bg-ink/10 relative rounded-full p-[2px] cursor-none hover:bg-ink/20 transition-colors"
-               >
-                  <motion.div
-                     animate={{ x: isDarkMode ? 16 : 0 }}
-                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                     className="w-3 h-3 bg-ink rounded-full"
-                  />
-               </button>
                <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="flex flex-col gap-[5px] cursor-none p-1"
@@ -851,9 +970,9 @@ export default function WessPortfolio() {
 
             {/* TRON ASCII HERO — REBOOTED v4.0 */}
             <section
-               className={`col-span-12 h-[calc(100vh-140px)] min-h-[500px] border-b border-muted overflow-hidden relative transition-colors duration-1000 ${isDarkMode ? 'bg-[#060606]' : 'bg-white'}`}
+               className={`col-span-12 h-[100dvh] min-h-[600px] -mt-[53px] pt-[53px] w-full flex items-center justify-center border-b border-muted overflow-hidden relative transition-colors duration-1000 ${isDarkMode ? 'bg-[#060606]' : 'bg-white'}`}
             >
-               <TronHero isDarkMode={isDarkMode} heroRef={heroRef} />
+               <TronHero isDarkMode={isDarkMode} heroRef={heroRef} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} />
             </section>
 
 
@@ -906,31 +1025,35 @@ export default function WessPortfolio() {
                <div className="flex flex-col">
                   <ProjectRow
                      step="01"
-                     title="Neon Core"
-                     desc="Sistema de orquestração autônoma para infraestruturas críticas operando com latência zero e clareza radical."
-                     img="https://picsum.photos/seed/neon/800/600"
-                     icon={Plus}
+                     title="GC-HDLAB"
+                     desc="Refatoração Capacity: Performance e Integridade de Dados no HDLab."
+                     img={withPrefix("/img/mockup_hdlab.png")}
+                     icon={Target}
+                     onClick={() => setActiveCase("hdlab")}
                   />
                   <ProjectRow
                      step="02"
-                     title="Quantum UI"
-                     desc="Design System orientado a intenção e acessibilidade cognitiva em escala corporativa."
-                     img="https://picsum.photos/seed/quantum/800/600"
-                     icon={Target}
+                     title="BioAIDesign"
+                     desc="Otimização de Usabilidade e Centralização Metodológica."
+                     img={withPrefix("/img/mockup_bioai.png")}
+                     icon={Fingerprint}
+                     onClick={() => setActiveCase("bioai")}
                   />
                   <ProjectRow
                      step="03"
-                     title="Agent Flow"
-                     desc="Mapeamento de jornada para assistentes inteligentes contextuais focados em confiança agêntica."
-                     img="https://picsum.photos/seed/agent/800/600"
-                     icon={Fingerprint}
+                     title="Anestesia Pediátrica"
+                     desc="Design Estratégico para Mitigação de Risco Clínico."
+                     img={withPrefix("/img/mockup_anestesia.png")}
+                     icon={Eye}
+                     onClick={() => setActiveCase("anestesia")}
                   />
                   <ProjectRow
                      step="04"
-                     title="Einstein"
-                     desc="Consultoria de inovação para interfaces críticas onde a precisão diagnóstica é requisito funcional."
-                     img="https://picsum.photos/seed/hosp/800/600"
-                     icon={Eye}
+                     title="Youcom"
+                     desc="Design Estratégico para o Comportamento Digital."
+                     img={withPrefix("/img/thumb_yc.png")}
+                     icon={Plus}
+                     onClick={() => setActiveCase("youcom")}
                   />
                </div>
             </section>
@@ -956,13 +1079,13 @@ export default function WessPortfolio() {
                <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
                   <div className="md:col-span-3 p-[var(--spacing-section)] border-r border-muted flex items-center">
                      <ScrollReveal>
-                        <span className={`font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-bold ${isDarkMode ? "text-white" : "text-black"}`}>003 // LOGS_DETALHADOS</span>
+                        <span className={`font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-bold ${isDarkMode ? "text-white" : "text-black"}`}>003 // LOGS_EXPERIÊNCIA</span>
                      </ScrollReveal>
                   </div>
                   <div className="md:col-span-9 p-[var(--spacing-section)]">
                      <ScrollReveal delay={0.1}>
                         <h2 className={`text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                           <ShuffleText text="LOG_DE_SOLUÇÕES" delay={0.15} speed={25} />
+                           <ShuffleText text="LOG_DE_XP" delay={0.15} speed={25} />
                         </h2>
 
                      </ScrollReveal>
@@ -989,58 +1112,76 @@ export default function WessPortfolio() {
 
             {/* EXPERIENCE_LOG — TYPOGRAPHIC ALIGNMENT v1.5.0 */}
             <section className={`col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-muted min-h-[400px] divide-y md:divide-y-0 md:divide-x divide-muted transition-colors ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-               <ScrollReveal delay={0.1}><ExpCell isDark={isDarkMode} id="01" entity="COMPASSO UOL" role="Líder de Produto" desc="Liderança estratégica para Frigelar e DPSP. Protocolos analíticos." icon={Terminal} /></ScrollReveal>
-               <ScrollReveal delay={0.2}><ExpCell isDark={isDarkMode} id="02" entity="EINSTEIN" role="Inovação" desc="Consultoria de Inovação em saúde. Interfaces de alta resolução." icon={Search} /></ScrollReveal>
-               <ScrollReveal delay={0.3}><ExpCell isDark={isDarkMode} id="03" entity="BRADESCO" role="Estrategista UX" desc="Escalabilidade em ecossistemas bancários de alta volumetria." icon={Activity} /></ScrollReveal>
-               <ScrollReveal delay={0.4}><ExpCell isDark={isDarkMode} id="04" entity="LENOVO" role="Estratégia UX" desc="Design de experiência e inovação para hardware e serviços globais." icon={Pointer} /></ScrollReveal>
+               <ScrollReveal delay={0.1}><ExpCell isDark={isDarkMode} id="01" entity="EINSTEIN" role="Gestor de Inovação" desc="Design estratégico aplicado à saúde. Desenvolvimento de interfaces de alta resolução." icon={Terminal} /></ScrollReveal>
+               <ScrollReveal delay={0.2}><ExpCell isDark={isDarkMode} id="02" entity="COMPASSO UOL" role="Líder de Produto" desc="Direcionamento estratégico para grandes players do varejo. Foco em escalabilidade e métricas." icon={Search} /></ScrollReveal>
+               <ScrollReveal delay={0.3}><ExpCell isDark={isDarkMode} id="03" entity="BRADESCO / SABION" role="UX/UI Estrategista" desc="Entrega de interfaces centradas em resultados para plataformas de larga escala." icon={Activity} /></ScrollReveal>
+               <ScrollReveal delay={0.4}><ExpCell isDark={isDarkMode} id="04" entity="TITANS GROUP" role="UX/UI" desc="Arquitetura de soluções digitais para o mercado LatAm e produtos proprietários." icon={Pointer} /></ScrollReveal>
             </section>
 
 
             {/* CONNECT_FOOTER: DIRECT CTA ARCHITECTURE — v1.3.0 */}
-            <footer id="connect" className={`col-span-12 border-t border-muted transition-colors ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-               {/* MIDDLE SECTION: CALL TO ACTION — v1.2.2 */}
-               <div className="p-[var(--spacing-section)] md:p-24 flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
-                  <div className="flex flex-col gap-8 flex-1">
-                     <ScrollReveal>
-                        <h2 className={`text-4xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase max-w-none md:max-w-[40ch] ${isDarkMode ? "text-white" : "text-black"}`}>
-                           <AnimatedText text="Vamos conversar sobre um projeto, colaboração ou uma ideia que você tenha?" type="words" stagger={0.08} />
-                        </h2>
-
-                     </ScrollReveal>
+            <footer id="connect" className={`col-span-12 border-t border-muted transition-colors pt-24 pb-12 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+               {/* TOP SECTION: CONTACT & SOCIALS */}
+               <div className="px-6 md:px-12 lg:px-24 grid grid-cols-1 md:grid-cols-3 gap-12 mb-32">
+                  {/* CONTACT COLS */}
+                  <div className="flex flex-col gap-2">
+                     <a href="mailto:contateowess@gmail.com" className="text-xl md:text-2xl font-display font-bold tracking-tighter hover:line-through transition-all lowercase">contateowess@gmail.com</a>
+                     <div className="flex flex-col font-mono text-[11px] opacity-40 tracking-widest uppercase gap-1">
+                        <span>log_Brasil</span>
+                        <div className="flex items-center gap-2">
+                           <span>Terminal_sempre_disponível</span>
+                           <div className="w-2 h-2 bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] rounded-sm" />
+                        </div>
+                     </div>
                   </div>
-                  <ScrollReveal delay={0.2}>
-                     <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className={`flex gap-4 p-6 border border-muted transition-all shadow-sm group ${isDarkMode ? "bg-white text-black hover:bg-black hover:text-white" : "bg-black text-white hover:bg-white hover:text-black"}`}
-                     >
-                        <span className={`font-mono text-[11px] uppercase tracking-[0.4em] font-bold transition-colors ${isDarkMode ? "text-black group-hover:text-white" : "text-white group-hover:text-black"}`}>Enviar_Mensagem</span>
-                        <div className={`w-3 h-3 transition-colors ${isDarkMode ? "bg-black group-hover:bg-white" : "bg-white group-hover:bg-black"}`} />
-                     </motion.button>
-                  </ScrollReveal>
+
+                  {/* CENTER: BEHANCE */}
+                  <div className="flex flex-col md:items-center">
+                     <a href="#" className="text-xl md:text-2xl font-display font-bold tracking-tighter hover:line-through transition-all">Behance</a>
+                  </div>
+
+                  {/* RIGHT: LINKEDIN */}
+                  <div className="flex flex-col md:items-end">
+                     <a href="#" className="text-xl md:text-2xl font-display font-bold tracking-tighter hover:line-through transition-all">LinkedIn</a>
+                  </div>
                </div>
 
-               {/* BOTTOM SUB-FOOTER: METADATA & LINKS */}
-               <div className="grid grid-cols-1 md:grid-cols-12 p-8 md:p-12 border-t border-muted text-[10px] font-mono tracking-widest opacity-40 uppercase">
-                  <div className="md:col-span-4">
-                     ©2026 Design & Codificação feito com emoção.
-                  </div>
-                  <div className="md:col-span-6 flex gap-8 justify-center">
-                     {[
-                        { label: "LinkedIn", href: "#" },
-                        { label: "Email", href: "mailto:contato@wess.design" },
-                        { label: "O que faço quando não trabalho", href: "#" },
-                        { label: "DS_SYSTEM.V2", href: withPrefix("/design-system") }
-                     ].map(link => (
-                        <a key={link.label} href={link.href} className={`hover:line-through transition-all cursor-none ${isDarkMode ? "hover:text-white" : "hover:text-ink"}`}>{link.label}</a>
-                     ))}
-                  </div>
-                  <div className="md:col-span-2 text-right">
-                     <a href="#" className={`hover:translate-y-[-2px] inline-block transition-all ${isDarkMode ? "hover:text-white text-white/40" : "hover:text-ink text-ink/40"}`}>Voltar ao topo ↑</a>
+               {/* METADATA ROW */}
+               <div className="px-6 md:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-8 mb-16 font-mono text-[10px] tracking-[0.2em] opacity-40 uppercase">
+                  <span>©2026 Design & Codificação feito com emoção.</span>
+                  <a href="#" className="hover:line-through transition-all">Vamos conversar →</a>
+                  <span>DEUS_NO_CONTROLE</span>
+               </div>
+
+               {/* MASSIVE BRANDING LOGO */}
+               <div className="px-4 md:px-8 pointer-events-none select-none overflow-hidden">
+                  <div className="flex justify-center items-center py-8">
+                     <div
+                        className={`w-full h-[150px] md:h-[250px] lg:h-[400px] transition-all duration-1000 ${isDarkMode ? "bg-white" : "bg-black"}`}
+                        style={{
+                           maskImage: `url(${withPrefix("/img/logo_wess.svg")})`,
+                           maskSize: 'contain',
+                           maskRepeat: 'no-repeat',
+                           maskPosition: 'bottom center'
+                        }}
+                     />
                   </div>
                </div>
             </footer>
          </main>
+
+         <AnimatePresence>
+            {activeCase && (
+               <CaseStudyView
+                  key={activeCase}
+                  isOpen={!!activeCase}
+                  onClose={() => setActiveCase(null)}
+                  isDarkMode={false}
+                  caseId={activeCase}
+                  onNext={(id) => setActiveCase(id)}
+               />
+            )}
+         </AnimatePresence>
       </div>
    );
 }
@@ -1059,7 +1200,7 @@ export function ExpCell({ id, entity, role, desc, icon: Icon, isDark }: { id: st
    return (
       <div className={`p-[var(--spacing-section)] border-t border-muted group hover:bg-canvas transition-colors flex flex-col h-full ${isDark ? "bg-black text-white" : "bg-white text-black"}`}>
          <div className="flex justify-between items-start mb-8">
-            <span className="font-mono text-[9px] opacity-40 tracking-[0.4em] uppercase font-bold">{id} // LOG_DE_ENTREGAS</span>
+            <span className="font-mono text-[9px] opacity-40 tracking-[0.4em] uppercase font-bold">{id} // LOG_DE_EMPRESAS</span>
             {Icon && <Icon size={14} className={`opacity-20 group-hover:opacity-100 transition-opacity ${isDark ? "text-white" : "text-ink"}`} strokeWidth={1.5} />}
          </div>
          <div className="mt-auto space-y-4">
@@ -1141,6 +1282,54 @@ export function ProjectTile({ id, tag, title, img, details, isDark }: { id: stri
                </motion.div>
             )}
          </AnimatePresence>
+      </motion.div>
+   );
+}
+
+export function LiquidLoader({ onComplete, isDarkMode }: { onComplete: () => void, isDarkMode: boolean }) {
+   const text = "Carregando terminal de projetos do wess...";
+   const [displayedText, setDisplayedText] = useState("");
+   const [showCursor, setShowCursor] = useState(true);
+   const [isExiting, setIsExiting] = useState(false);
+
+   useEffect(() => {
+      let i = 0;
+      const interval = setInterval(() => {
+         if (i < text.length) {
+            setDisplayedText(text.slice(0, i + 1));
+            i++;
+         } else {
+            clearInterval(interval);
+            // Settle briefy then exit
+            setTimeout(() => {
+               setIsExiting(true);
+               setTimeout(() => onComplete(), 800);
+            }, 500);
+         }
+      }, 50);
+      return () => clearInterval(interval);
+   }, []);
+
+   useEffect(() => {
+      const cursorInterval = setInterval(() => {
+         setShowCursor(prev => !prev);
+      }, 500);
+      return () => clearInterval(cursorInterval);
+   }, []);
+
+   return (
+      <motion.div
+         initial={{ opacity: 1 }}
+         animate={{ opacity: isExiting ? 0 : 1 }}
+         transition={{ duration: 0.8, ease: "easeInOut" }}
+         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black text-white pointer-events-none`}
+      >
+         <div className="flex flex-col items-center">
+            <div className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase flex items-center">
+               <span>{displayedText}</span>
+               <span className={`inline-block w-[2px] h-4 bg-white ml-1 transition-opacity ${showCursor ? 'opacity-100' : 'opacity-0'}`}>|</span>
+            </div>
+         </div>
       </motion.div>
    );
 }

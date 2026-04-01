@@ -65,7 +65,7 @@ export default function DesignSystemPage() {
 
    return (
       <div className="min-h-screen bg-canvas text-ink transition-colors duration-500 font-body cursor-none selection:bg-ink selection:text-canvas overflow-x-hidden">
-         <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} />
+         <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} activeCase={null} />
 
          {/* DS HEADER */}
          <header className="fixed top-0 inset-x-0 h-16 border-b border-muted bg-surface/80 backdrop-blur-md z-[100] px-8 flex justify-between items-center">
