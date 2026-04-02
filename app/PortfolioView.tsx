@@ -684,30 +684,6 @@ export function TronHero({ isDarkMode, heroRef, cursorXSpring, cursorYSpring }: 
                      Designer estratégico com 18 anos de bagagem em ux e produtos digitais, entrego interfaces de alta resolução para serviços memoraveis.
                   </motion.p>
 
-                  <motion.button
-                     initial={{ opacity: 0, y: 20 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     transition={{ delay: 0.6, duration: 1 }}
-                     whileHover={{ scale: 1.02 }}
-                     whileTap={{ scale: 0.98 }}
-                     onClick={() => window.location.href = "mailto:contato@wess.design"}
-                     className={`md:hidden flex gap-4 p-4 border border-muted transition-all shadow-sm group mt-4 ${isDarkMode ? "bg-white text-black hover:bg-black hover:text-white" : "bg-black text-white hover:bg-white hover:text-black"}`}
-                  >
-                     <span className={`font-mono text-[10px] uppercase tracking-[0.4em] font-bold transition-colors ${isDarkMode ? "text-black group-hover:text-white" : "text-white group-hover:text-black"}`}>Enviar_Mensagem</span>
-                     <div className={`w-2.5 h-2.5 transition-colors ${isDarkMode ? "bg-black group-hover:bg-white" : "bg-white group-hover:bg-black"}`} />
-                  </motion.button>
-                  <motion.button
-                     initial={{ opacity: 0, y: 20 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     transition={{ delay: 0.6, duration: 1 }}
-                     whileHover={{ scale: 1.02 }}
-                     whileTap={{ scale: 0.98 }}
-                     onClick={() => window.location.href = "mailto:contato@wess.design"}
-                     className={`md:hidden flex gap-4 p-4 border border-muted transition-all shadow-sm group mt-4 ${isDarkMode ? "bg-white text-black hover:bg-black hover:text-white" : "bg-black text-white hover:bg-white hover:text-black"}`}
-                  >
-                     <span className={`font-mono text-[10px] uppercase tracking-[0.4em] font-bold transition-colors ${isDarkMode ? "text-black group-hover:text-white" : "text-white group-hover:text-black"}`}>D</span>
-                     <div className={`w-2.5 h-2.5 transition-colors ${isDarkMode ? "bg-black group-hover:bg-white" : "bg-white group-hover:bg-black"}`} />
-                  </motion.button>
                </div>
             </motion.div>
 
@@ -740,8 +716,8 @@ export function HUDCursor({
    return (
       <div className="fixed inset-0 pointer-events-none z-[9999]">
          {/* AXIS LINES */}
-         <motion.div style={{ y: cursorYSpring }} className={`absolute left-0 w-full h-[1px] ${activeCase ? "bg-black/20" : "bg-white opacity-40 mix-blend-difference"}`} />
-         <motion.div style={{ x: cursorXSpring }} className={`absolute top-0 h-full w-[1px] ${activeCase ? "bg-black/20" : "bg-white opacity-40 mix-blend-difference"}`} />
+         <motion.div style={{ y: cursorYSpring }} className={`absolute left-0 w-full h-[1px] ${activeCase ? "bg-black/15" : "bg-white opacity-15 mix-blend-difference"}`} />
+         <motion.div style={{ x: cursorXSpring }} className={`absolute top-0 h-full w-[1px] ${activeCase ? "bg-black/15" : "bg-white opacity-15 mix-blend-difference"}`} />
 
          {/* TERMINAL SIGHT */}
          <motion.div
@@ -750,8 +726,7 @@ export function HUDCursor({
          >
             <motion.div
                animate={{
-                  scale: isHoveringClickable ? 1.8 : 1,
-                  backgroundColor: "transparent"
+                  scale: isHoveringClickable ? 1.8 : 1
                }}
                transition={{ type: "spring", stiffness: 400, damping: 25 }}
                className={`relative w-6 h-6 rounded-full border-[1px] flex items-center justify-center ${activeCase ? "border-black/40" : "border-white mix-blend-difference"}`}
@@ -1325,16 +1300,21 @@ export function LiquidLoader({ onComplete, isDarkMode }: { onComplete: () => voi
 
    return (
       <motion.div
+         role="status"
+         aria-live="polite"
+         aria-busy={!isExiting}
          initial={{ opacity: 1 }}
          animate={{ opacity: isExiting ? 0 : 1 }}
          transition={{ duration: 0.8, ease: "easeInOut" }}
-         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black text-white pointer-events-none`}
+         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black text-white pointer-events-none px-[var(--spacing-section)] text-center`}
       >
-         <div className="flex flex-col items-center">
-            <div className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase flex items-center">
+         <div className="flex flex-col items-center w-full max-w-sm mx-auto">
+            <div className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase flex items-center justify-center flex-wrap gap-y-2">
                <span>{displayedText}</span>
-               <span className={`inline-block w-[2px] h-4 bg-white ml-1 transition-opacity ${showCursor ? 'opacity-100' : 'opacity-0'}`}>|</span>
+               <span aria-hidden="true" className={`inline-block w-[2px] h-4 bg-white ml-1 transition-opacity ${showCursor ? 'opacity-100' : 'opacity-0'}`}>|</span>
             </div>
+            {/* Screen reader only text for accessibility stability */}
+            <span className="sr-only">Carregando o terminal de projetos de Wess. Aguarde um momento.</span>
          </div>
       </motion.div>
    );
