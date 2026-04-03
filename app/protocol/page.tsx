@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { GlitchImage, ProjectRow, ExpCell } from "../PortfolioView";
+import { GlitchImage } from "../../components/ui/GlitchImage";
+import { ProjectRow } from "../../components/ui/ProjectRow";
+import { ExpCell } from "../../components/ui/ExpCell";
 import { withPrefix } from "../utils/paths";
 
 export default function ProtocolPage() {

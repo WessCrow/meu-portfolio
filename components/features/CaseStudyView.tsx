@@ -3,7 +3,10 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, ArrowLeft, Terminal, Layout, Target, Eye, Fingerprint, Command } from "lucide-react";
-import { AnimatedText, ShuffleText, GlitchImage, withPrefix } from "./PortfolioView";
+import { withPrefix } from "../../app/utils/paths";
+import { AnimatedText } from "../ui/AnimatedText";
+import { ShuffleText } from "../ui/ShuffleText";
+import { GlitchImage } from "../ui/GlitchImage";
 
 export interface CaseStudyData {
    id: string;

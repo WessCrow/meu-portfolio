@@ -85,6 +85,9 @@ html {
   --color-muted: var(--color-border-default);
   --color-secondary: var(--color-surface-sunken);
 
+  --color-accent-innovation: var(--accent-innovation);
+  --color-accent-hazard: var(--accent-hazard);
+
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
@@ -182,6 +185,16 @@ html {
 /* SQUARED BUTTONS */
 .btn-matrix {
   @apply px-8 py-4 border border-muted text-ink font-mono text-xs uppercase tracking-widest transition-all duration-300 hover:bg-ink hover:text-canvas;
+}
+
+.btn-matrix:focus-visible {
+  outline: none;
+  @apply ring-2 ring-accent-innovation ring-offset-2 ring-offset-canvas;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-innovation);
+  outline-offset: 4px;
 }
 
 /* TYPOGRAPHY LOADING EFFECTS */

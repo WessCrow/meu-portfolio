@@ -7,7 +7,10 @@ import {
    Plus, X, ArrowRight, Search, Terminal, Command, 
    MousePointer2, Eye, Target, Fingerprint, Activity, Pointer
 } from "lucide-react";
-import { ProjectRow, ExpCell, ProjectTile, HUDCursor } from "../PortfolioView";
+import { ProjectRow } from "../../components/ui/ProjectRow";
+import { ExpCell } from "../../components/ui/ExpCell";
+import { ProjectTile } from "../../components/ui/ProjectTile";
+import { HUDCursor } from "../../components/ui/HUDCursor";
 import { withPrefix } from "../utils/paths";
 
 export default function DesignSystemPage() {
