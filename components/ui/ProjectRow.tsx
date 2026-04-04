@@ -13,18 +13,24 @@ interface ProjectRowProps {
   isDark?: boolean;
   icon?: LucideIcon;
   onClick?: () => void;
+  hoverColor?: string;
 }
 
-export function ProjectRow({ step, title, desc, img, isDark, icon: Icon, onClick }: ProjectRowProps) {
+export function ProjectRow({ step, title, desc, img, isDark, icon: Icon, onClick, hoverColor }: ProjectRowProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
       onClick={onClick}
       whileHover={{ zIndex: 50, transition: { duration: 0 } }}
-      className="grid grid-cols-1 md:grid-cols-12 border-b border-muted p-[var(--spacing-section)] items-center group cursor-pointer hover:bg-surface-sunken transition-colors relative gap-y-6 md:gap-y-0"
+      aria-label={`Ver case ${title}`}
+      style={{ backgroundColor: isHovered && hoverColor ? hoverColor : undefined }}
+      className="w-full text-left grid grid-cols-1 md:grid-cols-12 border-b border-muted py-6 px-4 md:p-[var(--spacing-section)] items-center group cursor-pointer hover:bg-surface-sunken transition-colors relative gap-y-4 md:gap-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
     >
       <div className="col-span-12 md:col-span-3 flex items-center gap-[var(--spacing-4)]">
         <div className="flex items-center gap-2">
@@ -69,6 +75,6 @@ export function ProjectRow({ step, title, desc, img, isDark, icon: Icon, onClick
         </p>
         <span className="font-mono text-[8px] opacity-40 group-hover:opacity-100 transition-opacity uppercase font-bold tracking-widest">Recon_Ativo</span>
       </div>
-    </motion.div>
+    </motion.button>
   );
 }

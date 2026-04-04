@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     // Build HTML for the email
     const htmlHeader = `
       <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-        <h2 style="color: #00F2FE; background: #000; padding: 10px; display: inline-block; border-radius: 4px;">NOVA PROPOSTA GERADA</h2>
+        <h2 style="color: #000000; background: #000; padding: 10px; display: inline-block; border-radius: 4px;">NOVA PROPOSTA GERADA</h2>
         <p style="font-size: 14px; color: #666;">ID do Protocolo: ${Math.floor(Math.random() * 999999).toString().padStart(6, '0')}</p>
         <hr style="border: 0.5px solid #eee; margin: 20px 0;">
     `;

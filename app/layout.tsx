@@ -14,6 +14,13 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
+        {/* WCAG 2.4.1 — Skip Navigation Link */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-black focus:text-white focus:font-mono focus:text-xs focus:uppercase focus:tracking-widest focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-white"
+        >
+          Ir para conteúdo principal
+        </a>
         {children}
         {/* GLOBAL CHROMATIC ABERRATION FILTER */}
         <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none', opacity: 0 }}>

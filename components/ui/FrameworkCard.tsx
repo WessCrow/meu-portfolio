@@ -15,7 +15,7 @@ interface FrameworkCardProps {
 export function FrameworkCard({ index, subtitle, title, description, icon: IconComponent, isDark }: FrameworkCardProps) {
   return (
     <ScrollReveal delay={parseInt(index) * 0.1}>
-      <div className={`p-[var(--spacing-section)] border-t border-muted group hover:bg-canvas transition-colors flex flex-col h-full ${isDark ? "text-white" : "text-black"}`}>
+      <div className={`p-[var(--spacing-section)] border-t border-muted group hover:bg-surface-sunken transition-colors flex flex-col h-full ${isDark ? "text-white" : "text-black"}`}>
         {/* Header: matches ExpCell style but with dynamic phase label */}
         <div className="flex justify-between items-start mb-8">
           <span className="font-mono text-[9px] opacity-40 tracking-[0.4em] uppercase font-bold">{index} // {subtitle}</span>
@@ -46,7 +46,7 @@ export function FrameworkCard({ index, subtitle, title, description, icon: IconC
 }
 
 export const IconDescoberta = () => (
-   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2">
+   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2" role="img" aria-label="Fase de Descoberta e Pesquisa">
       <circle cx="50" cy="50" r="40" />
       <circle cx="50" cy="50" r="25" strokeDasharray="4 4" className="opacity-40" />
       <circle cx="50" cy="50" r="12" />
@@ -57,7 +57,7 @@ export const IconDescoberta = () => (
 );
 
 export const IconDefinicao = () => (
-   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2">
+   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2" role="img" aria-label="Fase de Definição Estratégica">
       <path d="M50 10 L85 80 L15 80 Z" />
       <line x1="50" y1="10" x2="50" y2="80" />
       <line x1="50" y1="10" x2="35" y2="80" className="opacity-40" />
@@ -68,7 +68,7 @@ export const IconDefinicao = () => (
 );
 
 export const IconDesenvolvimento = () => (
-   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2">
+   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2" role="img" aria-label="Fase de Desenvolvimento e Prototipagem">
       <rect x="30" y="30" width="40" height="40" transform="rotate(45 50 50)" />
       <rect x="38" y="38" width="24" height="24" transform="rotate(45 50 50)" strokeDasharray="2 2" className="opacity-40" />
       <path d="M50 8 L92 50 L50 92 L8 50 Z" className="opacity-20" />
@@ -77,7 +77,7 @@ export const IconDesenvolvimento = () => (
 );
 
 export const IconEntrega = () => (
-   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2">
+   <svg viewBox="0 0 100 100" className="w-full h-full stroke-current fill-none" strokeWidth="1.2" role="img" aria-label="Fase de Entrega e Validação Técnica">
       <path d="M50 5 L88 27 L88 73 L50 95 L12 73 L12 27 Z" />
       <path d="M50 25 L72 38 L72 62 L50 75 L28 62 L28 38 Z" className="opacity-60" />
       <line x1="50" y1="5" x2="50" y2="95" className="opacity-10" />

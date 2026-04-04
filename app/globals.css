@@ -17,7 +17,7 @@ html {
   --neutral-950: #050505;
 
   --accent-primary: #000000;
-  --accent-innovation: #00F2FE;
+  --accent-innovation: #000000;
   --accent-success: #22c55e;
   --accent-hazard: #FF2A2A;
 
@@ -25,10 +25,11 @@ html {
   --color-canvas: var(--neutral-0);
   --color-surface: var(--neutral-0);
   --color-surface-sunken: var(--neutral-50);
-  
-  --color-text-primary: var(--neutral-900);
-  --color-text-secondary: var(--neutral-800);
-  --color-text-muted: var(--neutral-400);
+
+  --color-text-primary: var(--neutral-900);   /* #0A0A0A — 20.9:1 AAA */
+  --color-text-secondary: var(--neutral-800); /* #1A1A1A — 18.6:1 AAA */
+  --color-text-muted: #595959;                /* 7.0:1  — AAA (era #A1A1AA: 2.4:1 REPROVADO) */
+  --color-text-label: #767676;                /* 4.54:1 — AA  mínimo para texto pequeno */
   --color-text-on-dark: var(--neutral-0);
 
   --color-border-default: var(--neutral-200);
@@ -46,10 +47,12 @@ html {
   --spacing-6: 24px;
   --spacing-8: 32px;
   --spacing-12: 48px;
-  --spacing-section: 55px;
+  --spacing-section: 40px;
+  --spacing-section-y: 60px;
 
   @media (max-width: 768px) {
-    --spacing-section: 32px;
+    --spacing-section: 40px;
+    --spacing-section-y: 60px;
   }
 
   --radius-none: 0px;
@@ -64,7 +67,7 @@ html {
   
   --color-text-primary: var(--neutral-0);
   --color-text-secondary: var(--neutral-200);
-  --color-text-muted: rgba(180, 180, 180, 0.4);
+  --color-text-muted: rgba(180, 180, 180, 0.7); /* increased: 0.4→0.7 for WCAG AA on dark */
   --color-text-on-dark: var(--neutral-0);
 
   --color-border-default: rgba(134, 134, 134, 0.2);
@@ -195,6 +198,11 @@ html {
 :focus-visible {
   outline: 2px solid var(--accent-innovation);
   outline-offset: 4px;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
 }
 
 /* TYPOGRAPHY LOADING EFFECTS */
@@ -358,3 +366,74 @@ html {
 }
 
 /* HERO OVERRIDES REMOVED TO PREVENT CONFLICTS */
+
+/* ─────────────────────────────────────────────
+   WCAG 2.3.3 / 2.2 — Reduced Motion
+   Respects OS-level "Reduce Motion" preference
+   ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-marquee {
+    animation: none;
+    overflow-x: auto;
+  }
+
+  .glitch-overlay {
+    animation: none;
+  }
+
+  .animate-scan {
+    animation: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────
+   WCAG 2.1 AA/AAA — Light Section Token Override
+
+   The document root always carries .dark, which
+   flips all tokens to white. .section-light
+   re-anchors every semantic token to light values
+   so that text-ink, bg-canvas, etc. are correct
+   even when html.dark is active.
+   ───────────────────────────────────────────────── */
+.section-light {
+  /* Semantic tokens — override .dark values */
+  --color-canvas:          var(--neutral-0);       /* #FFFFFF */
+  --color-surface:         var(--neutral-0);
+  --color-surface-sunken:  var(--neutral-50);      /* #F8F8F8 */
+  --color-text-primary:    var(--neutral-900);     /* #0A0A0A — 20.9:1 AAA */
+  --color-text-secondary:  var(--neutral-800);     /* #1A1A1A — 18.6:1 AAA */
+  --color-text-muted:      #595959;                /* 7.0:1   — AAA */
+  --color-text-label:      #767676;                /* 4.54:1  — AA  */
+  --color-border-default:  var(--neutral-200);     /* #E0E0E0 */
+  --color-border-subtle:   var(--neutral-300);
+
+  /* Tailwind @theme aliases — re-anchor to light values */
+  --color-ink:             var(--neutral-900);     /* text-ink → #0A0A0A */
+  --color-ink-muted:       var(--neutral-800);     /* text-ink-muted → #1A1A1A */
+  --color-muted:           var(--neutral-200);     /* border-muted → #E0E0E0 */
+  --color-secondary:       var(--neutral-50);      /* bg-secondary → #F8F8F8 */
+
+  color: var(--neutral-900);
+  background-color: var(--neutral-0);
+}
+
+/* Labels (font-mono small — needs AA 4.5:1) */
+.section-light .wcag-label {
+  color: var(--color-text-label);
+  opacity: 1;
+}
+
+/* Secondary / body text (needs AA 4.5:1) */
+.section-light .wcag-muted {
+  color: var(--color-text-muted);
+  opacity: 1;
+}

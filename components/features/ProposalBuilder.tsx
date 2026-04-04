@@ -18,6 +18,7 @@ import { SERVICES, HOURLY_RATE } from './constants';
 import type { ProposalResults } from './utils';
 import { calculateProposal } from './utils';
 import { ScrollReveal } from '../ui/ScrollReveal';
+import { ShuffleText } from '../ui/ShuffleText';
 import ContactDrawer from './ContactDrawer';
 import type { ContactData } from './ContactDrawer';
 
@@ -109,25 +110,31 @@ export default function ProposalBuilder({
   };
 
   return (
-    <section id="proposal-builder" className={`col-span-12 py-24 border-t border-muted transition-colors ${isDark ? 'bg-[#0F0F0F] text-white' : 'bg-white text-black'}`}>
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
-        
-        {/* HEADER */}
-        <div className="flex flex-col mb-16 gap-4">
+    <section id="proposal-builder" className={`section-light col-span-12 border-b border-muted flex flex-col transition-colors ${isDark ? 'bg-[#0F0F0F] text-white' : 'bg-white text-black'}`}>
+
+      {/* HEADER — same pattern as 002, 003, 004 */}
+      <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDark ? 'bg-[#0F0F0F] text-white' : 'bg-white text-black'}`}>
+        <div className="md:col-span-3 px-[var(--spacing-section)] py-[var(--spacing-section-y)] border-r border-muted flex items-center">
           <ScrollReveal>
-            <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">005 // PROPOSAL_BUILDER.v2.6</span>
-          </ScrollReveal>
-          <ScrollReveal delay={0.1}>
-            <h2 className="text-[50px] font-display font-bold tracking-tighter uppercase leading-[0.9] text-ink">
-              ESTRUTURE SEU <br /> PROJETO EM <br /> TEMPO REAL.
-            </h2>
-          </ScrollReveal>
-          <ScrollReveal delay={0.2}>
-            <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[600px] mt-4">
-              Selecione os módulos desejados, ajuste os parâmetros de execução e visualize instantaneamente o escopo técnico e financeiro.
-            </p>
+            <span className="wcag-label font-mono text-[9px] uppercase tracking-[0.4em] italic font-bold">005 // LOG_PROPOSTAS</span>
           </ScrollReveal>
         </div>
+        <div className="md:col-span-9 px-[var(--spacing-section)] py-[var(--spacing-section-y)]">
+          <ScrollReveal delay={0.1}>
+            <h2 className={`text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold ${isDark ? 'text-white' : 'text-black'}`}>
+              <ShuffleText text="SOLICITE_UMA_PROPOSTA" delay={0.15} speed={25} />
+            </h2>
+          </ScrollReveal>
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="px-[var(--spacing-section)] py-[var(--spacing-section-y)]">
+        <ScrollReveal delay={0.2}>
+          <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[600px] mb-12">
+            Selecione os módulos desejados, ajuste os parâmetros de execução e visualize instantaneamente o escopo técnico e financeiro.
+          </p>
+        </ScrollReveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
@@ -151,12 +158,12 @@ export default function ProposalBuilder({
                     transition={{ delay: i * 0.05 }}
                     viewport={{ once: true }}
                     className={`flex items-start gap-4 p-5 text-left border transition-all duration-300 relative group cursor-none
-                      ${isSelected 
-                        ? 'border-accent-innovation bg-accent-innovation/5' 
+                      ${isSelected
+                        ? 'border-black bg-black/5'
                         : 'border-muted hover:border-ink/40 bg-surface-sunken/20'
                       }`}
                   >
-                    <div className={`p-2 border ${isSelected ? 'border-accent-innovation text-accent-innovation' : 'border-muted text-ink/40'} transition-colors`}>
+                    <div className={`p-2 border ${isSelected ? 'border-black text-black' : 'border-muted text-ink/40'} transition-colors`}>
                       <Icon size={18} strokeWidth={1.5} />
                     </div>
                     <div className="flex flex-col gap-1">
@@ -165,7 +172,7 @@ export default function ProposalBuilder({
                     </div>
                     {isSelected && (
                       <div className="absolute top-2 right-2">
-                        <CheckCircle2 size={12} className="text-accent-innovation" />
+                        <CheckCircle2 size={12} className="text-black" />
                       </div>
                     )}
                   </motion.button>
@@ -230,43 +237,43 @@ export default function ProposalBuilder({
               </div>
             </div>
 
-            {/* DYNAMIC CONTROLS (SLIDERS) */}
-            <div className="flex flex-col gap-8">
-              <div className="flex items-center gap-3 border-b border-muted pb-4">
-                <TrendingUp size={14} className="opacity-40" />
-                <h3 className="font-mono text-[11px] uppercase tracking-[0.3em] font-bold">Variáveis de Escopo</h3>
-              </div>
-              
+            {/* DYNAMIC CONTROLS — WCAG 1.3.1 fieldset groups related controls */}
+            <fieldset className="flex flex-col gap-8 border-none p-0 m-0">
+              <legend className="flex items-center gap-3 border-b border-muted pb-4 w-full">
+                <TrendingUp size={14} aria-hidden="true" className="opacity-40" />
+                <span className="font-mono text-[11px] uppercase tracking-[0.3em] font-bold">Variáveis de Escopo</span>
+              </legend>
+
               <div className="flex flex-col gap-10">
-                <HUDSlider 
-                  label="Prazo" 
-                  value={deadline} 
-                  onChange={setDeadline} 
-                  minLabel="Acelerado" 
-                  maxLabel="Flexível" 
+                <HUDSlider
+                  label="Prazo"
+                  value={deadline}
+                  onChange={setDeadline}
+                  minLabel="Acelerado"
+                  maxLabel="Flexível"
                   icon={Clock}
                   isDark={isDark}
                 />
-                <HUDSlider 
-                  label="Investimento" 
-                  value={investment} 
-                  onChange={setInvestment} 
-                  minLabel="MVP" 
-                  maxLabel="Premium" 
+                <HUDSlider
+                  label="Investimento"
+                  value={investment}
+                  onChange={setInvestment}
+                  minLabel="MVP"
+                  maxLabel="Premium"
                   icon={Calculator}
                   isDark={isDark}
                 />
-                <HUDSlider 
-                  label="Escala" 
-                  value={scale} 
-                  onChange={setScale} 
-                  minLabel="Simples" 
-                  maxLabel="Robusto" 
+                <HUDSlider
+                  label="Escala"
+                  value={scale}
+                  onChange={setScale}
+                  minLabel="Simples"
+                  maxLabel="Robusto"
                   icon={Maximize}
                   isDark={isDark}
                 />
               </div>
-            </div>
+            </fieldset>
           </div>
 
           {/* RIGHT: LIVE PROPOSAL OUTPUT */}
@@ -276,7 +283,7 @@ export default function ProposalBuilder({
                   <div className="flex flex-col gap-8 relative z-10">
                     <div className="flex flex-col gap-1">
                       <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.3em] font-black">RESUMO_DA_PROPOSTA</span>
-                      <div className="h-[1px] w-12 bg-accent-innovation" />
+                      <div className="h-[1px] w-12 bg-black" />
                     </div>
 
                     <div className="flex flex-col gap-6">
@@ -316,7 +323,7 @@ export default function ProposalBuilder({
                             <span className="font-mono text-[9px] uppercase font-bold">{stage.name}</span>
                             <div className="flex items-center gap-3">
                               <span className="font-mono text-[9px] opacity-40">{stage.hours}H</span>
-                              <div className={`w-1 h-3 ${stage.complexity === 'Alta' ? 'bg-accent-hazard' : stage.complexity === 'Média' ? 'bg-accent-innovation' : 'bg-muted'}`} />
+                              <div className={`w-1 h-3 ${stage.complexity === 'Alta' ? 'bg-accent-hazard' : stage.complexity === 'Média' ? 'bg-black' : 'bg-muted'}`} />
                             </div>
                           </div>
                         ))}
@@ -324,11 +331,14 @@ export default function ProposalBuilder({
                     </div>
 
                     <motion.button
+                      type="button"
                       disabled={selectedIds.length === 0 || isSubmitting}
                       onClick={handleConfirm}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`btn-matrix w-full py-5 flex items-center justify-center gap-4 group disabled:opacity-30 disabled:pointer-events-none relative overflow-hidden`}
+                      aria-busy={isSubmitting}
+                      aria-label={isSubmitting ? "Processando proposta" : selectedIds.length === 0 ? "Selecione serviços para confirmar proposta" : "Confirmar proposta"}
+                      className={`btn-matrix w-full py-5 flex items-center justify-center gap-4 group disabled:opacity-30 disabled:pointer-events-none relative overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black`}
                     >
                       <AnimatePresence mode="wait">
                         {isSubmitting ? (
@@ -371,7 +381,7 @@ export default function ProposalBuilder({
           </div>
 
         </div>
-      </div>
+      </div>{/* end content */}
 
       <ContactDrawer 
         isOpen={isDrawerOpen} 
@@ -394,35 +404,42 @@ interface HUDSliderProps {
 }
 
 function HUDSlider({ label, value, onChange, minLabel, maxLabel, icon: Icon, isDark }: HUDSliderProps) {
+  const sliderId = `slider-${label.toLowerCase()}`;
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Icon size={12} className="opacity-40" />
-          <span className="font-mono text-[9px] uppercase tracking-widest font-black">{label}</span>
+          <Icon size={12} aria-hidden="true" className="opacity-40" />
+          {/* WCAG 1.3.1 — label id used by aria-labelledby */}
+          <span id={`${sliderId}-label`} className="font-mono text-[9px] uppercase tracking-widest font-black">{label}</span>
         </div>
-        <span className="font-mono text-[10px] font-bold text-accent-innovation">{value}%</span>
+        <span aria-live="polite" aria-atomic="true" className="font-mono text-[10px] font-bold text-black">{value}%</span>
       </div>
-      
+
       <div className="relative h-6 flex items-center group">
-        <input 
+        <input
+          id={sliderId}
           type="range"
           min="0"
           max="100"
           value={value}
           onChange={(e) => onChange(parseInt(e.target.value))}
-          className="w-full h-1 bg-muted rounded-none appearance-none cursor-none outline-none focus:ring-0 opacity-100 group-hover:bg-ink/20 transition-colors focus-visible:ring-1 focus-visible:ring-accent-innovation focus-visible:ring-offset-2"
+          aria-labelledby={`${sliderId}-label`}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={value}
+          aria-valuetext={`${label}: ${value}% — ${value < 33 ? minLabel : value < 66 ? 'Padrão' : maxLabel}`}
+          className="w-full h-1 bg-muted rounded-none appearance-none cursor-none outline-none focus:ring-0 opacity-100 group-hover:bg-ink/20 transition-colors focus-visible:ring-1 focus-visible:ring-black focus-visible:ring-offset-2"
           style={{
-            background: `linear-gradient(to right, ${isDark ? '#00F2FE' : '#000'} ${value}%, ${isDark ? '#1A1A1A' : '#E0E0E0'} ${value}%)`
+            background: `linear-gradient(to right, #000 ${value}%, ${isDark ? '#1A1A1A' : '#E0E0E0'} ${value}%)`
           }}
         />
-        {/* Custom HUD marks */}
-        <div className="absolute top-1/2 left-0 w-1 h-3 bg-muted -translate-y-1/2 pointer-events-none" />
-        <div className="absolute top-1/2 right-0 w-1 h-3 bg-muted -translate-y-1/2 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 w-[1px] h-2 bg-muted -translate-y-1/2 pointer-events-none opacity-20" />
+        <div aria-hidden="true" className="absolute top-1/2 left-0 w-1 h-3 bg-muted -translate-y-1/2 pointer-events-none" />
+        <div aria-hidden="true" className="absolute top-1/2 right-0 w-1 h-3 bg-muted -translate-y-1/2 pointer-events-none" />
+        <div aria-hidden="true" className="absolute top-1/2 left-1/2 w-[1px] h-2 bg-muted -translate-y-1/2 pointer-events-none opacity-20" />
       </div>
 
-      <div className="flex justify-between font-mono text-[8px] opacity-30 uppercase tracking-widest">
+      <div aria-hidden="true" className="flex justify-between font-mono text-[8px] uppercase tracking-widest" style={{ color: 'var(--color-text-label)' }}>
         <span>{minLabel}</span>
         <span>{maxLabel}</span>
       </div>

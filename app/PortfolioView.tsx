@@ -59,6 +59,7 @@ export default function WessPortfolio() {
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeCase, setActiveCase] = useState<string | null>(null);
+  const [isCursorOnDark, setIsCursorOnDark] = useState(true);
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -90,6 +91,20 @@ export default function WessPortfolio() {
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
+
+      // Detect background luminance under cursor to auto-switch color
+      const els = document.elementsFromPoint(e.clientX, e.clientY);
+      for (const el of els) {
+        if ((el as HTMLElement).id === 'hud-cursor') continue;
+        const bg = window.getComputedStyle(el as HTMLElement).backgroundColor;
+        if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') continue;
+        const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (m) {
+          const lum = (0.299 * +m[1] + 0.587 * +m[2] + 0.114 * +m[3]) / 255;
+          setIsCursorOnDark(lum < 0.5);
+        }
+        break;
+      }
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -125,7 +140,7 @@ export default function WessPortfolio() {
       <AnimatePresence>
         {isLoading && <LiquidLoader onComplete={() => setIsLoading(false)} isDarkMode={isDarkMode} />}
       </AnimatePresence>
-      <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} activeCase={activeCase} />
+      <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} isDarkBackground={isCursorOnDark} />
 
       {/* HEADER PROTOCOL */}
       <header className={`fixed top-0 left-0 w-full z-[80] border-b border-muted transition-colors px-6 md:px-8 h-[53px] flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] font-normal ${isDarkMode ? "bg-black/90 text-white backdrop-blur-md" : "bg-white text-black"}`}>
@@ -136,21 +151,21 @@ export default function WessPortfolio() {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="hidden md:inline opacity-50 tracking-widest uppercase text-white drop-shadow-md">Wess // Strategic Designer</span>
-              <span className="md:hidden opacity-50 tracking-widest uppercase text-white drop-shadow-md">Wess // Designer</span>
+              <span className={`hidden md:inline opacity-50 tracking-widest uppercase drop-shadow-md ${isDarkMode ? "text-white" : "text-black"}`}>Wess // Strategic Designer</span>
+              <span className={`md:hidden opacity-50 tracking-widest uppercase drop-shadow-md ${isDarkMode ? "text-white" : "text-black"}`}>Wess // Designer</span>
             </div>
 
           </div>
         </div>
 
-        {/* DESKTOP NAV */}
-        <div className={`hidden md:flex items-center gap-10 transition-all duration-500 absolute left-1/2 -translate-x-1/2 ${!isScrolled ? 'opacity-0 translate-y-[-10px] pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+        {/* DESKTOP NAV — WCAG 2.4.1 */}
+        <nav aria-label="Navegação principal" className={`hidden md:flex items-center gap-10 transition-all duration-500 absolute left-1/2 -translate-x-1/2 ${!isScrolled ? 'opacity-0 translate-y-[-10px] pointer-events-none' : 'opacity-100 translate-y-0'}`}>
           {(
             [["cases", "PROJETOS"], ["experience", "EXPERIÊNCIA"], ["connect", "CONTATO"]] as const
           ).map(([anchor, label]) => (
-            <a key={anchor} href={`#${anchor}`} className="hover:line-through transition-all opacity-90 hover:opacity-100 text-white drop-shadow-md">{label}</a>
+            <a key={anchor} href={`#${anchor}`} className={`hover:line-through transition-all opacity-90 hover:opacity-100 drop-shadow-md ${isDarkMode ? "text-white" : "text-black"}`}>{label}</a>
           ))}
-        </div>
+        </nav>
 
         {/* STATUS FLAG */}
         <div className="flex items-center gap-4">
@@ -162,16 +177,19 @@ export default function WessPortfolio() {
             </div>
           </div>
 
-          {/* MOBILE HAMBURGER */}
+          {/* MOBILE HAMBURGER — WCAG 4.1.2 */}
           <div className="flex md:hidden items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex flex-col gap-[5px] cursor-none p-1"
-              aria-label="Menu"
+              className="flex flex-col gap-[5px] cursor-none p-3 min-w-[44px] min-h-[44px] items-center justify-center"
+              aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+              type="button"
             >
-              <motion.span animate={{ rotate: isMenuOpen ? 45 : 0, y: isMenuOpen ? 7 : 0 }} className="block w-5 h-[1.5px] bg-ink origin-center transition-all" />
-              <motion.span animate={{ opacity: isMenuOpen ? 0 : 1 }} className="block w-5 h-[1.5px] bg-ink" />
-              <motion.span animate={{ rotate: isMenuOpen ? -45 : 0, y: isMenuOpen ? -7 : 0 }} className="block w-5 h-[1.5px] bg-ink origin-center transition-all" />
+              <motion.span aria-hidden="true" animate={{ rotate: isMenuOpen ? 45 : 0, y: isMenuOpen ? 7 : 0 }} className="block w-5 h-[1.5px] bg-ink origin-center transition-all" />
+              <motion.span aria-hidden="true" animate={{ opacity: isMenuOpen ? 0 : 1 }} className="block w-5 h-[1.5px] bg-ink" />
+              <motion.span aria-hidden="true" animate={{ rotate: isMenuOpen ? -45 : 0, y: isMenuOpen ? -7 : 0 }} className="block w-5 h-[1.5px] bg-ink origin-center transition-all" />
             </button>
           </div>
         </div>
@@ -180,7 +198,10 @@ export default function WessPortfolio() {
       {/* MOBILE MENU */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+          <motion.nav
+            id="mobile-menu"
+            role="navigation"
+            aria-label="Menu mobile"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -192,14 +213,14 @@ export default function WessPortfolio() {
                 key={anchor}
                 href={`#${anchor}`}
                 onClick={() => setIsMenuOpen(false)}
-                className="px-6 py-5 border-b border-muted opacity-60 hover:opacity-100 hover:bg-surface-sunken transition-all"
+                className="px-6 py-5 border-b border-muted opacity-60 hover:opacity-100 hover:bg-surface-sunken transition-all min-h-[44px] flex items-center"
               >{label}</a>
             ))}
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
 
-      <main className="pt-[53px] px-[30px] max-w-[1920px] mx-auto min-h-[calc(100vh-53px)]">
+      <main id="main-content" className="pt-[53px] px-0 max-w-[1920px] m-0 min-h-[calc(100vh-53px)]">
         {/* TRON HERO */}
         <section className={`col-span-12 h-[100dvh] min-h-[600px] -mt-[53px] pt-[53px] w-full flex items-center justify-center border-b border-muted overflow-hidden relative transition-colors duration-1000 ${isDarkMode ? 'bg-[#060606]' : 'bg-white'}`}>
           <TronHero isDarkMode={isDarkMode} heroRef={heroRef} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} />
@@ -207,13 +228,10 @@ export default function WessPortfolio() {
 
         {/* TELEMETRY MATRIX */}
         <section className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted transition-colors divide-x divide-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-          <a
-            href={withPrefix("/protocol")}
-            className="md:col-span-3 p-[var(--spacing-section)] flex items-center justify-center font-mono text-[10px] uppercase opacity-20 hover:opacity-100 tracking-widest text-ink font-bold gap-3 transition-opacity transition-colors hover:bg-white/5 cursor-none"
-          >
-            <Activity size={12} />
-            PROTOCOLOS_ATIVOS.v26
-          </a>
+          <div className="md:col-span-3 p-[var(--spacing-section)] flex items-center justify-center font-mono text-[10px] uppercase opacity-50 tracking-widest text-ink font-bold gap-3">
+            <Activity size={12} aria-hidden="true" />
+            PROTOCOLOS_ATIVOS.39y
+          </div>
           <div className="md:col-span-3 p-[var(--spacing-section)] flex flex-col gap-2 group hover:bg-surface-sunken transition-colors">
             <div className="flex justify-between items-start">
               <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">IA_ACCELERATION_LOG</span>
@@ -237,15 +255,15 @@ export default function WessPortfolio() {
           </div>
         </section>
 
-        {/* CASES SECTION */}
-        <section id="cases" className={`col-span-12 flex flex-col transition-colors relative ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-          <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-            <div className="md:col-span-3 p-[var(--spacing-section)] border-r border-muted flex items-center">
+        {/* CASES SECTION — section-light: WCAG AA/AAA enforced */}
+        <section id="cases" className="section-light col-span-12 flex flex-col transition-colors relative bg-white text-black">
+          <div className="grid grid-cols-1 md:grid-cols-12 border-b border-muted bg-white text-black">
+            <div className="md:col-span-3 px-[var(--spacing-section)] py-[var(--spacing-section-y)] border-r border-muted flex items-center">
               <ScrollReveal>
-                <span className="font-mono text-[9px] opacity-30 uppercase tracking-[0.4em] italic font-bold">002 // AREA_CASES</span>
+                <span className="wcag-label font-mono text-[9px] uppercase tracking-[0.4em] italic font-bold">002 // LOGS_CASES</span>
               </ScrollReveal>
             </div>
-            <div className="md:col-span-9 p-[var(--spacing-section)]">
+            <div className="md:col-span-9 px-[var(--spacing-section)] py-[var(--spacing-section-y)]">
               <ScrollReveal delay={0.1}>
                 <h2 className="text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold">
                   <ShuffleText text="LOG_DE_ENTREGAS" delay={0.15} speed={25} />
@@ -261,6 +279,7 @@ export default function WessPortfolio() {
               img={withPrefix("/img/mockup_hdlab.png")}
               icon={Target}
               onClick={() => setActiveCase("hdlab")}
+              hoverColor="#CBB9ED"
             />
             <ProjectRow
               step="02"
@@ -269,6 +288,7 @@ export default function WessPortfolio() {
               img={withPrefix("/img/mockup_bioai.png")}
               icon={Fingerprint}
               onClick={() => setActiveCase("bioai")}
+              hoverColor="#B9C0D0"
             />
             <ProjectRow
               step="03"
@@ -277,6 +297,7 @@ export default function WessPortfolio() {
               img={withPrefix("/img/mockup_anestesia.png")}
               icon={Eye}
               onClick={() => setActiveCase("anestesia")}
+              hoverColor="#FEE4DB"
             />
             <ProjectRow
               step="04"
@@ -285,36 +306,39 @@ export default function WessPortfolio() {
               img={withPrefix("/img/thumb_yc.png")}
               icon={Plus}
               onClick={() => setActiveCase("youcom")}
+              hoverColor="#C5E3E4"
             />
           </div>
         </section>
 
         {/* CLIENTS MARQUEE */}
-        <section className={`col-span-12 border-b border-muted py-12 overflow-hidden whitespace-nowrap group ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-          <div className="flex gap-24 animate-marquee items-center translate-z-0">
+        <section className="section-light col-span-12 border-b border-muted py-12 overflow-hidden whitespace-nowrap group bg-white text-black">
+          {/* WCAG 1.3.1 — list semantics; opacity-20→50 for minimum contrast */}
+          <ul aria-label="Clientes atendidos" className="flex gap-24 animate-marquee items-center translate-z-0 list-none">
             {[...CLIENTS, ...CLIENTS, ...CLIENTS].map((client, i) => (
-              <motion.span
-                key={i}
-                whileHover={{ scale: 1.05 }}
-                className="font-display text-lg md:text-2xl opacity-20 hover:opacity-100 transition-all tracking-tighter uppercase font-bold hover:line-through"
-              >
-                {client}
-              </motion.span>
+              <li key={i}>
+                <motion.span
+                  whileHover={{ scale: 1.05 }}
+                  className="font-display text-lg md:text-2xl opacity-50 hover:opacity-100 transition-all tracking-tighter uppercase font-bold hover:line-through"
+                >
+                  {client}
+                </motion.span>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
         {/* IDENTITY BLOCK */}
-        <section id="experience" className={`col-span-12 flex flex-col transition-colors relative ${isDarkMode ? "bg-[#0F0F0F] text-white" : "bg-white text-black"}`}>
-          <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDarkMode ? "bg-[#0F0F0F] text-white" : "bg-white text-black"}`}>
-            <div className="md:col-span-3 p-[var(--spacing-section)] border-r border-muted flex items-center">
+        <section id="experience" className="section-light col-span-12 flex flex-col transition-colors relative bg-white text-black">
+          <div className="grid grid-cols-1 md:grid-cols-12 border-b border-muted bg-white text-black">
+            <div className="md:col-span-3 px-[var(--spacing-section)] py-[var(--spacing-section-y)] border-r border-muted flex items-center">
               <ScrollReveal>
-                <span className={`font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-bold ${isDarkMode ? "text-white" : "text-black"}`}>003 // LOGS_EXPERIÊNCIAS</span>
+                <span className="wcag-label font-mono text-[9px] uppercase tracking-[0.4em] italic font-bold">003 // LOGS_EXPERIÊNCIAS</span>
               </ScrollReveal>
             </div>
-            <div className="md:col-span-9 p-[var(--spacing-section)]">
+            <div className="md:col-span-9 px-[var(--spacing-section)] py-[var(--spacing-section-y)]">
               <ScrollReveal delay={0.1}>
-                <h2 className={`text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                <h2 className="text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold text-black">
                   <ShuffleText text="ÚLTIMOS_LOGS" delay={0.15} speed={25} />
                 </h2>
               </ScrollReveal>
@@ -322,9 +346,9 @@ export default function WessPortfolio() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12">
-            <div className={`col-span-12 p-[var(--spacing-section)] md:p-32 flex flex-col items-start justify-center relative overflow-hidden group min-h-[60vh] transition-colors ${isDarkMode ? "bg-[#0F0F0F] text-white" : "bg-white text-black"}`}>
+            <div className="col-span-12 px-[var(--spacing-section)] py-[var(--spacing-section-y)] md:p-32 flex flex-col items-start justify-center relative overflow-hidden group min-h-[60vh] transition-colors bg-white text-black">
               <ScrollReveal>
-                <h2 className={`text-3xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase ${isDarkMode ? "text-white" : "text-black"} max-w-none md:max-w-none text-left relative z-10 transition-transform duration-1000 group-hover:translate-x-4`}>
+                <h2 className="text-3xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase text-black max-w-none md:max-w-none text-left relative z-10 transition-transform duration-1000 group-hover:translate-x-4">
                   <AnimatedText text="Eu construo interfaces" type="words" stagger={0.1} delay={0.2} /> <br />
                   <AnimatedText text="inteligentes e intuitivas." type="words" stagger={0.1} delay={0.4} /> <br />
                   <AnimatedText text="Substituo incertezas por fluxos" type="words" stagger={0.1} delay={0.6} /> <br />
@@ -338,65 +362,80 @@ export default function WessPortfolio() {
         </section>
 
         {/* EXPERIENCE TILES */}
-        <section className={`col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-muted min-h-[400px] divide-y md:divide-y-0 md:divide-x divide-muted transition-colors ${isDarkMode ? "bg-[#0F0F0F] text-white" : "bg-white text-black"}`}>
-          <ScrollReveal delay={0.1}><ExpCell isDark={isDarkMode} id="01" entity="EINSTEIN" role="Gestor de Inovação" desc="[HEALTH_TECH] Design estratégico aplicado à alta complexidade do setor de saúde. [DEPLOY] Desenvolvimento de interfaces de alta resolução e sistemas de suporte à decisão clínica." icon={Terminal} /></ScrollReveal>
-          <ScrollReveal delay={0.2}><ExpCell isDark={isDarkMode} id="02" entity="COMPASSO UOL" role="Líder de Produto" desc="[RETAIL_STRATEGY] Direcionamento estratégico para grandes players do varejo global. [SCALE] Foco rigoroso em escalabilidade de interface e métricas de performance (ROI)." icon={Search} /></ScrollReveal>
-          <ScrollReveal delay={0.3}><ExpCell isDark={isDarkMode} id="03" entity="BRADESCO / SABION" role="UX/UI Estrategista" desc="[FINTECH_LOG] Entrega de interfaces centradas em resultados para plataformas bancárias de larga escala. [CONVERSION] Otimização de fluxos transacionais com foco em experiência do usuário e segurança." icon={Activity} /></ScrollReveal>
-          <ScrollReveal delay={0.4}><ExpCell isDark={isDarkMode} id="04" entity="TITANS GROUP" role="UX/UI" desc="[LATAM_MARKET] Arquitetura de soluções digitais escaláveis para o mercado LatAm e produtos proprietários. [PRODUCT_CORE] Estruturação de MVPs e evolução de ecossistemas digitais B2B e B2C." icon={Pointer} /></ScrollReveal>
+        <section className="section-light col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-muted min-h-[400px] divide-y md:divide-y-0 md:divide-x divide-muted transition-colors bg-white text-black">
+          <ScrollReveal delay={0.1}><ExpCell isDark={false} id="01" entity="EINSTEIN" role="Gestor de Inovação" desc="[HEALTH_TECH] Design estratégico aplicado à alta complexidade do setor de saúde. [DEPLOY] Desenvolvimento de interfaces de alta resolução e sistemas de suporte à decisão clínica." icon={Terminal} /></ScrollReveal>
+          <ScrollReveal delay={0.2}><ExpCell isDark={false} id="02" entity="COMPASSO UOL" role="Líder de Produto" desc="[RETAIL_STRATEGY] Direcionamento estratégico para grandes players do varejo global. [SCALE] Foco rigoroso em escalabilidade de interface e métricas de performance (ROI)." icon={Search} /></ScrollReveal>
+          <ScrollReveal delay={0.3}><ExpCell isDark={false} id="03" entity="BRADESCO / SABION" role="UX/UI Estrategista" desc="[FINTECH_LOG] Entrega de interfaces centradas em resultados para plataformas bancárias de larga escala. [CONVERSION] Otimização de fluxos transacionais com foco em experiência do usuário e segurança." icon={Activity} /></ScrollReveal>
+          <ScrollReveal delay={0.4}><ExpCell isDark={false} id="04" entity="TITANS GROUP" role="UX/UI" desc="[LATAM_MARKET] Arquitetura de soluções digitais escaláveis para o mercado LatAm e produtos proprietários. [PRODUCT_CORE] Estruturação de MVPs e evolução de ecossistemas digitais B2B e B2C." icon={Pointer} /></ScrollReveal>
         </section>
 
         {/* ABOUT SECTION */}
-        <section id="about" className={`col-span-12 relative min-h-[800px] border-b border-muted overflow-hidden flex flex-col justify-end transition-colors ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
-          <div className="absolute inset-0 z-0">
-            <div className={`absolute inset-0 z-10 ${isDarkMode ? "bg-gradient-to-r from-black via-black/80 to-transparent" : "bg-gradient-to-r from-white via-white/80 to-transparent"}`} />
-            <img
-              src={withPrefix("/wess.png")}
-              alt="The Architect"
-              className="w-full h-full object-cover object-right grayscale transition-all duration-1000 group-hover:grayscale-0 opacity-40 md:opacity-50"
-            />
-          </div>
-
-          <div className="relative z-20 px-6 md:px-12 lg:px-24 py-24 flex flex-col gap-16 max-w-[1400px]">
-            <ScrollReveal>
-              <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">004 // SOBRE_O_WESS</span>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.1}>
-              <h2 className="text-[50px] font-display font-bold tracking-tighter uppercase leading-[0.9] max-w-[1200px] text-ink">
-                A CONVERGÊNCIA <br /> ESTRATÉGICA ENTRE   <br /> DESIGN E ENGENHARIA.
-              </h2>
-            </ScrollReveal>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 relative">
-              <ScrollReveal delay={0.2}>
-                <div className="flex flex-col gap-6">
-                  <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">// SOBRE_O_WESS</span>
-                  <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[480px]">
-                    Minha jornada iniciada em 2008 consolidou uma visão única na intersecção entre a estética visual e o rigor do código. Como UX Engineer sênior, não entrego apenas telas; eu projeto sistemas que substituem a incerteza do negócio por fluxos objetivos e de alta conversão, guiando o usuário com clareza absoluta.
-                  </p>
-                </div>
+        <section id="about" className="section-light col-span-12 border-b border-muted flex flex-col transition-colors bg-white text-black">
+          {/* Header — same pattern as 002 and 003 */}
+          <div className="grid grid-cols-1 md:grid-cols-12 border-b border-muted bg-white text-black">
+            <div className="md:col-span-3 px-[var(--spacing-section)] py-[var(--spacing-section-y)] border-r border-muted flex items-center">
+              <ScrollReveal>
+                <span className="wcag-label font-mono text-[9px] uppercase tracking-[0.4em] italic font-bold">004 // LOG_SOBRE</span>
               </ScrollReveal>
-
-              <ScrollReveal delay={0.3}>
-                <div className="flex flex-col gap-6 lg:pl-12">
-                  <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">// METODOLOGIA: O DIAMANTE ACELERADO POR IA</span>
-                  <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[480px]">
-                    Minha abordagem redefine o Double Diamond tradicional. Integro Inteligência Artificial como um motor de agilidade em cada fase do processo. Enquanto o design tradicional diverge e converge, a IA me permite comprimir o tempo de descoberta e validar hipóteses em tempo recorde. Isso resulta em protótipos de alta fidelidade que antecipam falhas e garantem o ROI antes mesmo do deploy.
-                  </p>
-                </div>
+            </div>
+            <div className="md:col-span-9 px-[var(--spacing-section)] py-[var(--spacing-section-y)]">
+              <ScrollReveal delay={0.1}>
+                <h2 className="text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold text-black">
+                  <ShuffleText text="MÉTODO" delay={0.15} speed={25} />
+                </h2>
               </ScrollReveal>
             </div>
           </div>
 
-          <div className="relative z-20 w-full mt-24">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-t border-b border-muted divide-y md:divide-y-0 md:divide-x divide-muted">
+          {/* Content with background image */}
+          <div className="relative min-h-[800px] overflow-hidden flex flex-col justify-end">
+            <div className="absolute inset-0 z-0">
+              <div className="absolute inset-0 z-10 bg-gradient-to-r from-white via-white/80 to-transparent" />
+              <img
+                src={withPrefix("/wess.png")}
+                alt="Wesley Alves (Wess) — UX Engineer e Estrategista de Design"
+                loading="lazy"
+                className="w-full h-full object-cover object-right grayscale transition-all duration-1000 group-hover:grayscale-0 opacity-40 md:opacity-50"
+              />
+            </div>
+
+            <div className="relative z-20 px-[var(--spacing-section)] py-[var(--spacing-section-y)] flex flex-col gap-16 max-w-[1400px]">
+              <ScrollReveal delay={0.1}>
+                <h2 className="text-[50px] font-display font-bold tracking-tighter uppercase leading-[0.9] max-w-[1200px] text-ink">
+                  A CONVERGÊNCIA <br /> ESTRATÉGICA ENTRE   <br /> DESIGN E ENGENHARIA.
+                </h2>
+              </ScrollReveal>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 relative">
+                <ScrollReveal delay={0.2}>
+                  <div className="flex flex-col gap-6">
+                    <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">// SOBRE_O_WESS</span>
+                    <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[480px]">
+                      Minha jornada iniciada em 2008 consolidou uma visão única na intersecção entre a estética visual e o rigor do código. Como UX Engineer sênior, não entrego apenas telas; eu projeto sistemas que substituem a incerteza do negócio por fluxos objetivos e de alta conversão, guiando o usuário com clareza absoluta.
+                    </p>
+                  </div>
+                </ScrollReveal>
+
+                <ScrollReveal delay={0.3}>
+                  <div className="flex flex-col gap-6 lg:pl-12">
+                    <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">// METODOLOGIA: O DIAMANTE ACELERADO POR IA</span>
+                    <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[480px]">
+                      Minha abordagem redefine o Double Diamond tradicional. Integro Inteligência Artificial como um motor de agilidade em cada fase do processo. Enquanto o design tradicional diverge e converge, a IA me permite comprimir o tempo de descoberta e validar hipóteses em tempo recorde. Isso resulta em protótipos de alta fidelidade que antecipam falhas e garantem o ROI antes mesmo do deploy.
+                    </p>
+                  </div>
+                </ScrollReveal>
+              </div>
+            </div>
+
+            <div className="relative z-20 w-full mt-24">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-t border-b border-muted divide-y md:divide-y-0 md:divide-x divide-muted">
               <FrameworkCard
                 index="01"
                 subtitle="Discovery / Research"
                 title="DESCOBERTA"
                 description="IA analisa dados de comportamento e gera insights instantâneos, eliminando semanas de pesquisa manual."
                 icon={<IconDescoberta />}
-                isDark={isDarkMode}
+                isDark={false}
               />
               <FrameworkCard
                 index="02"
@@ -404,7 +443,7 @@ export default function WessPortfolio() {
                 title="DEFINIÇÃO"
                 description="Mapeamento veloz de pontos críticos e gargalos na jornada do usuário com previsibilidade de impacto."
                 icon={<IconDefinicao />}
-                isDark={isDarkMode}
+                isDark={false}
               />
               <FrameworkCard
                 index="03"
@@ -412,7 +451,7 @@ export default function WessPortfolio() {
                 title="DESENVOLVIMENTO"
                 description="Geração de código e protótipos de alta resolução otimizados por IA para testes imediatos."
                 icon={<IconDesenvolvimento />}
-                isDark={isDarkMode}
+                isDark={false}
               />
               <FrameworkCard
                 index="04"
@@ -420,17 +459,18 @@ export default function WessPortfolio() {
                 title="ENTREGA"
                 description="Validação contínua e refinamento técnico para garantir um produto escalável e impecável."
                 icon={<IconEntrega />}
-                isDark={isDarkMode}
+                isDark={false}
               />
+            </div>
             </div>
           </div>
         </section>
 
         {/* PROPOSAL BUILDER */}
-        <ProposalBuilder isDark={isDarkMode} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+        <ProposalBuilder isDark={false} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
 
         {/* FOOTER */}
-        <footer id="connect" className={`col-span-12 border-t border-muted transition-colors pt-24 pb-12 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+        <footer id="connect" className="section-light col-span-12 border-t border-muted transition-colors pt-24 pb-12 bg-white text-black">
           <div className="px-6 md:px-12 lg:px-24 grid grid-cols-1 md:grid-cols-3 gap-12 mb-32">
             <div className="flex flex-col gap-2">
               <a href="mailto:contateowess@gmail.com" className="text-xl md:text-2xl font-display font-bold tracking-tighter hover:line-through transition-all lowercase">contateowess@gmail.com</a>
@@ -466,7 +506,7 @@ export default function WessPortfolio() {
           <div className="px-4 md:px-8 pointer-events-none select-none overflow-hidden">
             <div className="flex justify-center items-center py-8">
               <div
-                className={`w-full h-[150px] md:h-[250px] lg:h-[400px] transition-all duration-1000 ${isDarkMode ? "bg-white" : "bg-black"}`}
+                className="w-full h-[150px] md:h-[250px] lg:h-[400px] transition-all duration-1000 bg-black"
                 style={{
                   maskImage: `url(${withPrefix("/img/logo_wess.svg")})`,
                   maskSize: 'contain',

@@ -1,14 +1,18 @@
-import { 
-  Target, 
-  Search, 
-  Layout, 
-  Cpu, 
-  Zap, 
-  ShieldCheck, 
-  Smartphone, 
-  BarChart3, 
-  Layers, 
-  Code2 
+import {
+  Target,
+  Search,
+  Layout,
+  Cpu,
+  Zap,
+  ShieldCheck,
+  Smartphone,
+  BarChart3,
+  Layers,
+  Code2,
+  Microscope,
+  Accessibility,
+  Gauge,
+  Palette
 } from 'lucide-react';
 
 export interface Service {
@@ -23,45 +27,52 @@ export const HOURLY_RATE = 200;
 
 export const SERVICES: Service[] = [
   {
+    id: 'ux-research',
+    title: 'UX Research',
+    description: 'Entendimento profundo do usuário.',
+    icon: Microscope,
+    baseHours: 28
+  },
+  {
     id: 'ux-audit',
-    title: 'Auditoria de UX/UI',
-    description: 'Análise heurística completa e diagnóstico de usabilidade.',
+    title: 'Auditoria UX/UI',
+    description: 'Diagnóstico de usabilidade.',
     icon: Search,
     baseHours: 24
   },
   {
+    id: 'ui-design',
+    title: 'UI Design',
+    description: 'Interface clara e intuitiva.',
+    icon: Layout,
+    baseHours: 40
+  },
+  {
+    id: 'accessibility',
+    title: 'Acessibilidade',
+    description: 'Inclusão e conformidade WCAG.',
+    icon: Accessibility,
+    baseHours: 20
+  },
+  {
     id: 'design-system',
     title: 'Design System',
-    description: 'Criação de biblioteca de componentes escalável e atômica.',
+    description: 'Escala e consistência.',
     icon: Layers,
     baseHours: 40
   },
   {
-    id: 'prototype',
-    title: 'Prototipagem High-Fi',
-    description: 'Desenvolvimento de fluxos navegáveis de alta fidelidade.',
-    icon: Zap,
-    baseHours: 32
-  },
-  {
-    id: 'mobile-app',
-    title: 'App Mobile',
-    description: 'Design de interface focado em experiência mobile-first.',
-    icon: Smartphone,
-    baseHours: 60
-  },
-  {
-    id: 'strategy',
-    title: 'Estratégia de Produto',
-    description: 'Mapeamento de jornada e definição de visão de produto.',
-    icon: Target,
+    id: 'performance',
+    title: 'Performance',
+    description: 'Velocidade e eficiência.',
+    icon: Gauge,
     baseHours: 30
   },
   {
-    id: 'frontend',
-    title: 'Engenharia Front-end',
-    description: 'Implementação de interfaces performáticas com React/Next.js.',
-    icon: Code2,
-    baseHours: 50
+    id: 'branding',
+    title: 'Criação de Marca',
+    description: 'Identidade e posicionamento.',
+    icon: Palette,
+    baseHours: 35
   }
 ];

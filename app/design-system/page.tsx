@@ -68,7 +68,7 @@ export default function DesignSystemPage() {
 
    return (
       <div className="min-h-screen bg-canvas text-ink transition-colors duration-500 font-body cursor-none selection:bg-ink selection:text-canvas overflow-x-hidden">
-         <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} activeCase={null} />
+         <HUDCursor isHoveringClickable={isHoveringClickable} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} isDarkBackground={true} />
 
          {/* DS HEADER */}
          <header className="fixed top-0 inset-x-0 h-16 border-b border-muted bg-surface/80 backdrop-blur-md z-[100] px-8 flex justify-between items-center">
@@ -121,7 +121,7 @@ export default function DesignSystemPage() {
                   <TokenGroup title="Borders & Accents">
                      <TokenSwatch label="Border Default" variable="--color-border-default" hex="Grid & Strokes" />
                      <TokenSwatch label="Border Accent" variable="--color-border-accent" hex="Active Indicators" />
-                     <TokenSwatch label="Innovation" variable="--accent-innovation" hex="#00F2FE" />
+                     <TokenSwatch label="Innovation" variable="--accent-innovation" hex="#000000" />
                   </TokenGroup>
                </div>
             </section>

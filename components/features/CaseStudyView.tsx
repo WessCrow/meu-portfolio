@@ -13,6 +13,7 @@ export interface CaseStudyData {
    title: string;
    subtitle: string;
    description: string;
+   hoverColor: string;
    metadata: {
       role: string;
       brand: string;
@@ -63,6 +64,7 @@ export const BIOAI_CASE: CaseStudyData = {
    title: "BioAIDesign",
    subtitle: "OTIMIZAÇÃO DE USABILIDADE E CENTRALIZAÇÃO METODOLÓGICA.",
    description: "Otimização de Usabilidade e Centralização de Ecossistema Digital. Foco em transformar o uso da plataforma em uma experiência contínua e sem interrupções para os fellows de biodesign.",
+   hoverColor: "#B9C0D0",
    metadata: {
       role: "UX/UI Estrategista",
       brand: "BioAIDesign",
@@ -104,6 +106,7 @@ export const HDLAB_CASE: CaseStudyData = {
    title: "GC-HDLAB",
    subtitle: "REFATORAÇÃO CAPACITY: PERFORMANCE E INTEGRIDADE DE DADOS NO HDLAB.",
    description: "Refatoração Capacity: Otimização de Performance e Inteligência Operacional. Intervenção técnica focada na reestruturação do core do sistema para restaurar a confiança e garantir a continuidade da gestão de projetos do HDLab.",
+   hoverColor: "#CBB9ED",
    metadata: {
       role: "UX/UI Coordenador",
       brand: "GC-HDLAB",
@@ -145,6 +148,7 @@ export const YOUCOM_CASE: CaseStudyData = {
    title: "Youcom",
    subtitle: "UNIFICAÇÃO DA JORNADA OMNICHANNEL E EXPERIÊNCIA DE MODA MOBILE FIRST.",
    description: "Fragmentação da Experiência: Identificamos uma disparidade entre o 'encantamento' do ponto de venda físico e a percepção puramente funcional do e-commerce.\n\nO desafio consistiu em unificar a jornada digital Youcom para alta performance, transformando o site em um ambiente de descoberta e desejo, focado em conversão e experiência de moda fluida.",
+   hoverColor: "#C5E3E4",
    metadata: {
       role: "UX/UI Strategist",
       brand: "Youcom",
@@ -186,6 +190,7 @@ export const ANESTESIA_CASE: CaseStudyData = {
    title: "Anestesia Pediátrica",
    subtitle: "JORNADA DE ANESTESIA PEDIÁTRICA: DESIGN DE SERVIÇO PARA MITIGAÇÃO DE MEDO E ANSIEDADE.",
    description: "Design de Serviço focado na mitigação de medo e ansiedade em jornadas hospitalares pediátricas. O desafio consistiu em unificar a experiência e humanizar o atendimento para reduzir o estresse pré-operatório.",
+   hoverColor: "#FEE4DB",
    metadata: {
       role: "Design Strategist & UX Writer",
       brand: "Albert Einstein",
@@ -356,7 +361,10 @@ export default function CaseStudyView({ isOpen, onClose, isDarkMode, caseId = "b
          {caseData.sections.map((section: any, idx: number) => (
             <section key={idx} className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted transition-colors`}>
                {section.layout === "full-image" ? (
-                  <div className="col-span-12 p-8 md:p-24 bg-ink text-canvas">
+                  <div
+                     className="col-span-12 p-8 md:p-24 text-black"
+                     style={{ backgroundColor: caseData.hoverColor }}
+                  >
                      <div className="flex justify-between items-end mb-8">
                         <div className="space-y-4">
                            <span className="font-mono text-[9px] opacity-60 tracking-[0.4em] font-bold uppercase">MODULO_{idx + 2} // {section.title}</span>
