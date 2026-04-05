@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import emailjs from '@emailjs/browser';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { 
   Plus, 
@@ -66,48 +67,39 @@ export default function ProposalBuilder({
   };
 
   const handleDrawerSubmit = async (data: ContactData) => {
-    // Generate a structured summary for reporting
-    const summary = {
-      services: selectedServices.map(s => s.title),
-      parameters: {
-        prazo: deadline === 0 ? 'Acelerado' : deadline > 50 ? 'Flexível' : 'Padrão',
-        investimento: investment === 100 ? 'Premium' : investment > 50 ? 'Padrão' : 'MVP',
-        escala: scale === 100 ? 'Robusto' : scale > 50 ? 'Médio' : 'Simples'
-      },
-      results: {
-        horas: results.totalHours,
-        semanas: results.deliveryWeeks,
-        preco: `R$ ${results.totalPrice.toLocaleString('pt-BR')}`
-      },
-      contact: data
-    };
-
     setIsSubmitting(true);
 
+    const templateParams = {
+      from_name: data.name,
+      from_email: data.email,
+      phone: data.phone || 'Não informado',
+      observations: data.observations || 'Nenhuma',
+      services: selectedServices.map(s => s.title).join(', '),
+      prazo: deadline === 0 ? 'Acelerado' : deadline > 50 ? 'Flexível' : 'Padrão',
+      investimento: investment === 100 ? 'Premium' : investment > 50 ? 'Padrão' : 'MVP',
+      escala: scale === 100 ? 'Robusto' : scale > 50 ? 'Médio' : 'Simples',
+      total_horas: results.totalHours,
+      total_semanas: results.deliveryWeeks,
+      total_preco: `R$ ${results.totalPrice.toLocaleString('pt-BR')}`,
+    };
+
     try {
-      const response = await fetch('/meu-portfolio/api/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(summary),
-      });
-
-      if (!response.ok) {
-        throw new Error('Falha ao enviar proposta baseada no servidor.');
-      }
-
-      const result = await response.json();
-      console.log('API Response:', result);
-      
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
+      );
       setSuccess(true);
       setTimeout(() => setSuccess(false), 8000);
     } catch (err: any) {
-      console.error('Submission Error:', err);
-      const errorMsg = err?.message || 'Erro desconhecido';
-      alert(`Erro ao enviar proposta: ${errorMsg}. Verifique a configuração da RESEND_API_KEY e o domínio no Resend.`);
+      console.error('EmailJS Error:', err);
+      alert(`Erro ao enviar proposta. Por favor, entre em contato por contateowess@gmail.com`);
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <section id="proposal-builder" className={`section-light col-span-12 border-b border-muted flex flex-col transition-colors ${isDark ? 'bg-[#0F0F0F] text-white' : 'bg-white text-black'}`}>
