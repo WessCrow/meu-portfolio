@@ -322,9 +322,8 @@ export default function ProposalBuilder({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       aria-busy={isSubmitting}
-                      aria-label={isSubmitting ? "Processando proposta" : selectedIds.length === 0 ? "Selecione serviços para confirmar proposta" : "Confirmar proposta"}
-                      className={`btn-matrix w-full py-5 flex items-center justify-center gap-4 group disabled:opacity-30 disabled:pointer-events-none relative overflow-hidden border-2 border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black`}
-
+                      aria-label={isSubmitting ? "Processando proposta" : selectedIds.length === 0 ? "Selecione serviços para confirmar proposta" : "Confirmar Proposta"}
+                      className={`btn-matrix w-full py-5 flex items-center justify-center gap-4 group disabled:opacity-30 disabled:pointer-events-none relative overflow-hidden border-2 border-black text-black font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black bg-white`}
                     >
                       <AnimatePresence mode="wait">
                         {isSubmitting ? (
@@ -333,7 +332,7 @@ export default function ProposalBuilder({
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             className="flex items-center gap-2"
                           >
-                            <div className="w-3 h-3 border-2 border-canvas border-t-transparent rounded-full animate-spin" />
+                            <div className="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin" />
                             <span>PROCESSANDO...</span>
                           </motion.div>
                         ) : success ? (
@@ -352,7 +351,7 @@ export default function ProposalBuilder({
                             className="flex items-center gap-2"
                           >
                             <span>CONFIRMAR PROPOSTA</span>
-                            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                            <ChevronRight size={18} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform text-black" />
                           </motion.div>
                         )}
                       </AnimatePresence>

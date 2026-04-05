@@ -18,13 +18,21 @@ export function HUDCursor({
 }: HUDCursorProps) {
   return (
     <div id="hud-cursor" className="fixed inset-0 pointer-events-none z-[9999]">
-      {/* AXIS LINES — #F6F6F6 at 30% opacity */}
+      {/* AXIS LINES — 15% opacity on dark, higher on light */}
       <motion.div
-        style={{ y: cursorYSpring, backgroundColor: '#F6F6F6', opacity: 1 }}
+        style={{ 
+          y: cursorYSpring, 
+          backgroundColor: isDarkBackground ? '#F6F6F6' : '#000000', 
+          opacity: isDarkBackground ? 0.15 : 0.2 
+        }}
         className="absolute left-0 w-full h-[1px]"
       />
       <motion.div
-        style={{ x: cursorXSpring, backgroundColor: '#F6F6F6', opacity: 1 }}
+        style={{ 
+          x: cursorXSpring, 
+          backgroundColor: isDarkBackground ? '#F6F6F6' : '#000000', 
+          opacity: isDarkBackground ? 0.15 : 0.2 
+        }}
         className="absolute top-0 h-full w-[1px]"
       />
 
