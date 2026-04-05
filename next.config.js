@@ -9,10 +9,13 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
+  env: {
+    NEXT_PUBLIC_EMAILJS_SERVICE_ID: 'service_8wp619u',
+    NEXT_PUBLIC_EMAILJS_TEMPLATE_ID: 'template_7sdzcnw',
+    NEXT_PUBLIC_EMAILJS_PUBLIC_KEY: 'cC411rcwYzHJKylQn',
   },
 };
+
 
 
 
