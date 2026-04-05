@@ -94,8 +94,18 @@ export default function ProposalBuilder({
       setTimeout(() => setSuccess(false), 8000);
     } catch (err: any) {
       console.error('EmailJS Error:', err);
-      alert(`Erro ao enviar proposta. Por favor, entre em contato por contateowess@gmail.com`);
+      const missing = [];
+      if (!process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID) missing.push('SERVICE_ID');
+      if (!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID) missing.push('TEMPLATE_ID');
+      if (!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY) missing.push('PUBLIC_KEY');
+      
+      if (missing.length > 0) {
+        alert(`ERRO DE CONFIGURAÇÃO: Faltam segredos no GitHub: ${missing.join(', ')}`);
+      } else {
+        alert(`Erro ao enviar proposta. Verifique se o SERVICE_ID e TEMPLATE_ID estão corretos no EmailJS.`);
+      }
     } finally {
+
       setIsSubmitting(false);
     }
   };
