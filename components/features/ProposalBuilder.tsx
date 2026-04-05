@@ -296,17 +296,8 @@ export default function ProposalBuilder({
                            <span className="font-mono text-[11px] opacity-40">SEMANAS</span>
                         </div>
                       </div>
-
-                      <div className="flex flex-col">
-                        <span className="font-mono text-[10px] opacity-40 uppercase mb-1">Investimento Est.</span>
-                        <div className="flex items-baseline gap-2">
-                           <span className="font-mono text-sm opacity-40">R$</span>
-                           <span className="text-4xl font-display font-bold tracking-tighter text-ink">
-                             {(results.totalPrice).toLocaleString('pt-BR')}
-                           </span>
-                        </div>
-                      </div>
                     </div>
+
 
                     {/* STAGES BREAKDOWN */}
                     <div className="flex flex-col gap-4 pt-6 border-t border-muted/30">
@@ -332,7 +323,8 @@ export default function ProposalBuilder({
                       whileTap={{ scale: 0.98 }}
                       aria-busy={isSubmitting}
                       aria-label={isSubmitting ? "Processando proposta" : selectedIds.length === 0 ? "Selecione serviços para confirmar proposta" : "Confirmar proposta"}
-                      className={`btn-matrix w-full py-5 flex items-center justify-center gap-4 group disabled:opacity-30 disabled:pointer-events-none relative overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black`}
+                      className={`btn-matrix w-full py-5 flex items-center justify-center gap-4 group disabled:opacity-30 disabled:pointer-events-none relative overflow-hidden border-2 border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black`}
+
                     >
                       <AnimatePresence mode="wait">
                         {isSubmitting ? (
@@ -369,8 +361,9 @@ export default function ProposalBuilder({
                 </div>
 
                 <div className={`px-4 py-3 border border-muted font-mono text-[8px] opacity-60 leading-relaxed uppercase tracking-tighter italic transition-colors ${isDark ? 'bg-neutral-900/50' : 'bg-neutral-50/80'}`}>
-                  *Valores estimados para base técnica sênior. O escopo final pode ser ajustado após reunião diagnóstica.
+                  *Os valores de investimento serão calculados com base no escopo e enviados exclusivamente por e-mail após a confirmação.
                 </div>
+
              </div>
           </div>
 
