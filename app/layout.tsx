@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import AnalyticsTracker from "../components/AnalyticsTracker";
 
 export const metadata: Metadata = {
   title: "Wess // Estrategista de Design & Inovação",
@@ -21,6 +22,7 @@ export default function RootLayout({
         >
           Ir para conteúdo principal
         </a>
+        <AnalyticsTracker />
         {children}
         {/* GLOBAL CHROMATIC ABERRATION FILTER */}
         <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none', opacity: 0 }}>

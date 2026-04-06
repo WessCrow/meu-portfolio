@@ -166,17 +166,7 @@ export default function WessPortfolio() {
             <a key={anchor} href={`#${anchor}`} className={`hover:line-through transition-all opacity-90 hover:opacity-100 drop-shadow-md ${isDarkMode ? "text-white" : "text-black"}`}>{label}</a>
           ))}
         </nav>
-
-        {/* STATUS FLAG */}
         <div className="flex items-center gap-4">
-          <div className="hidden lg:flex items-center gap-3">
-            <span className="opacity-30 tracking-[0.3em] font-normal text-[9px]">STATUS ATUAL:</span>
-            <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-sm">
-              <div className="w-1.5 h-1.5 bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)] rounded-full animate-pulse" />
-              <span className="text-green-500 text-[9px] font-bold tracking-widest">UX ENGINEER</span>
-            </div>
-          </div>
-
           {/* MOBILE HAMBURGER — WCAG 4.1.2 */}
           <div className="flex md:hidden items-center">
             <button

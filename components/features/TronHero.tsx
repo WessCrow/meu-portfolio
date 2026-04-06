@@ -429,7 +429,7 @@ export function TronHero({
               transition={{ delay: 0.5, duration: 1 }}
               className="font-body text-xs md:text-sm lg:text-base opacity-60 max-w-[320px] md:max-w-[700px] leading-relaxed font-medium hidden md:block"
             >
-              UX/UI Engineer com 18 anos de trajetória em produtos digitais. Minha diretriz é clara: utilizo Inteligência Artificial para otimizar processos morosos e entregar interfaces de alta resolução para serviços que escalam.
+              Designer com 18 anos de trajetória em produtos digitais. Minha diretriz é clara: utilizo Inteligência Artificial para otimizar processos morosos e entregar interfaces de alta resolução para serviços que escalam.
             </motion.p>
           </div>
         </motion.div>
