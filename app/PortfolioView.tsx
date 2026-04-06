@@ -231,7 +231,7 @@ export default function WessPortfolio() {
           </div>
           <div className="md:col-span-3 p-[var(--spacing-section)] flex flex-col gap-2 group hover:bg-surface-sunken transition-colors">
             <div className="flex justify-between items-start">
-              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">UX_ENGINEERING_LOG</span>
+              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">UX_DESIGNER_LOG</span>
               <Eye size={12} className="opacity-10 group-hover:opacity-40" />
             </div>
             <span className="font-mono text-[11px] font-bold uppercase tracking-tighter">SÊNIOR_ESTRATÉGICO</span>
@@ -383,7 +383,7 @@ export default function WessPortfolio() {
               <div className="absolute inset-0 z-10 bg-gradient-to-r from-white via-white/80 to-transparent" />
               <img
                 src={withPrefix("/wess.png")}
-                alt="Wesley Alves (Wess) — UX Engineer e Estrategista de Design"
+                alt="Wesley Alves (Wess) — Estrategista de Design"
                 loading="lazy"
                 className="w-full h-full object-cover object-right grayscale transition-all duration-1000 group-hover:grayscale-0 opacity-40 md:opacity-50"
               />
@@ -401,7 +401,7 @@ export default function WessPortfolio() {
                   <div className="flex flex-col gap-6">
                     <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">// SOBRE_O_WESS</span>
                     <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[480px]">
-                      Minha jornada iniciada em 2008 consolidou uma visão única na intersecção entre a estética visual e o rigor do código. Como UX Engineer sênior, não entrego apenas telas; eu projeto sistemas que substituem a incerteza do negócio por fluxos objetivos e de alta conversão, guiando o usuário com clareza absoluta.
+                      Minha jornada iniciada em 2008 consolidou uma visão única na intersecção entre a estética visual e o rigor do código. Como UX/UI sênior, não entrego apenas telas; eu projeto sistemas que substituem a incerteza do negócio por fluxos objetivos e de alta conversão, guiando o usuário com clareza absoluta.
                     </p>
                   </div>
                 </ScrollReveal>
@@ -419,39 +419,39 @@ export default function WessPortfolio() {
 
             <div className="relative z-20 w-full mt-24">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-t border-b border-muted divide-y md:divide-y-0 md:divide-x divide-muted">
-              <FrameworkCard
-                index="01"
-                subtitle="Discovery / Research"
-                title="DESCOBERTA"
-                description="IA analisa dados de comportamento e gera insights instantâneos, eliminando semanas de pesquisa manual."
-                icon={<IconDescoberta />}
-                isDark={false}
-              />
-              <FrameworkCard
-                index="02"
-                subtitle="Strategy / definition"
-                title="DEFINIÇÃO"
-                description="Mapeamento veloz de pontos críticos e gargalos na jornada do usuário com previsibilidade de impacto."
-                icon={<IconDefinicao />}
-                isDark={false}
-              />
-              <FrameworkCard
-                index="03"
-                subtitle="Prototype / High-Res"
-                title="DESENVOLVIMENTO"
-                description="Geração de código e protótipos de alta resolução otimizados por IA para testes imediatos."
-                icon={<IconDesenvolvimento />}
-                isDark={false}
-              />
-              <FrameworkCard
-                index="04"
-                subtitle="Technical / Validation"
-                title="ENTREGA"
-                description="Validação contínua e refinamento técnico para garantir um produto escalável e impecável."
-                icon={<IconEntrega />}
-                isDark={false}
-              />
-            </div>
+                <FrameworkCard
+                  index="01"
+                  subtitle="Discovery / Research"
+                  title="DESCOBERTA"
+                  description="IA analisa dados de comportamento e gera insights instantâneos, eliminando semanas de pesquisa manual."
+                  icon={<IconDescoberta />}
+                  isDark={false}
+                />
+                <FrameworkCard
+                  index="02"
+                  subtitle="Strategy / definition"
+                  title="DEFINIÇÃO"
+                  description="Mapeamento veloz de pontos críticos e gargalos na jornada do usuário com previsibilidade de impacto."
+                  icon={<IconDefinicao />}
+                  isDark={false}
+                />
+                <FrameworkCard
+                  index="03"
+                  subtitle="Prototype / High-Res"
+                  title="DESENVOLVIMENTO"
+                  description="Geração de código e protótipos de alta resolução otimizados por IA para testes imediatos."
+                  icon={<IconDesenvolvimento />}
+                  isDark={false}
+                />
+                <FrameworkCard
+                  index="04"
+                  subtitle="Technical / Validation"
+                  title="ENTREGA"
+                  description="Validação contínua e refinamento técnico para garantir um produto escalável e impecável."
+                  icon={<IconEntrega />}
+                  isDark={false}
+                />
+              </div>
             </div>
           </div>
         </section>

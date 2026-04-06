@@ -9,7 +9,7 @@ interface LiquidLoaderProps {
 }
 
 const LOADING_LINES = [
-  "[RUNNING] Inicializando terminal_ux_engineer.v26...",
+  "[RUNNING] Inicializando UX/UI Designer.v26...",
   "[DATA] Carregando 18 anos de registros e protocolos de design..."
 ];
 
