@@ -8,7 +8,11 @@ Registrar e acompanhar métricas de acesso e comportamento dos usuários no site
 |------------|--------------------|------------------|----------------|-------------------------------|
 | 2026-04-06 | 1 | 1 | 0 | Hero Button, CTA Button |
 | 2026-04-07 |                    |                  |                |                               |
-| 2026-04-08 |                    |                  |                |                               |
+| 2026-04-08 | 2 | 2 | 0 | CASE 01
+GC-HDLAB.
+PROTOCOLO_H_FIDELITY_CASE_01
+
+[R |
 ---
 ## 📌 Definições
 - **Total de Visitantes** → número total de acessos únicos no dia
