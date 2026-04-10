@@ -1,0 +1,91 @@
+# 📄 PDR — Blob Letter Grid Builder
+
+---
+
+## 🧠 1. VISÃO DO PRODUTO
+
+### 🎯 Nome
+Blob Letter Grid Builder
+
+---
+
+### 💡 Descrição
+
+Sistema interativo fullscreen para criação de letras estilizadas através de um grid modular.
+
+O usuário ativa células do grid para formar shapes, que se conectam automaticamente com um efeito visual de **blob líquido (liquid merging)**, criando formas orgânicas contínuas.
+
+---
+
+### 🚀 Problema
+
+- Tipografia experimental é difícil de criar programaticamente  
+- Grid-based design gera formas pixeladas  
+- Falta ferramentas simples para explorar formas orgânicas interativas  
+- Designers e devs não têm uma ponte direta entre grid e forma fluida  
+
+---
+
+### 🎯 Objetivo
+
+Criar um sistema que:
+
+- Permita desenhar letras de forma intuitiva  
+- Conecte células automaticamente  
+- Gere shapes fluidas (não pixeladas)  
+- Funcione como base para tipografia generativa  
+
+---
+
+---
+
+## 👥 2. USUÁRIOS
+
+### 🎯 Primários
+
+- Designers de produto  
+- UI/UX designers  
+- Creative coders  
+
+---
+
+### 🎯 Secundários
+
+- Desenvolvedores frontend  
+- Artistas digitais  
+- Times de branding  
+
+---
+
+---
+
+## 🧩 3. ESCOPO DO PRODUTO
+
+---
+
+### ✅ Funcionalidades principais
+
+---
+
+### 1. Grid fullscreen
+
+- Ocupa 100% da viewport  
+- Grid responsivo  
+- Células quadradas  
+
+---
+
+### 2. Interação
+
+- Clique ativa célula  
+- Clique novamente desativa  
+- Drag para pintar múltiplas células  
+
+---
+
+### 3. Sistema de estado
+
+```ts
+type Cell = {
+  active: boolean
+}
