@@ -18,7 +18,7 @@ export default function ProtocolPage() {
          <header className="mb-24 border-b border-black/10 pb-12 flex justify-between items-end">
             <div>
                <span className="font-mono text-[10px] uppercase tracking-[0.4em] opacity-30 italic">v26.2 // DESIGN_PROTOCOLS</span>
-               <h1 className="text-6xl font-display font-bold tracking-tighter uppercase mt-4">Wess Storybook.</h1>
+               <h1 className="text-6xl font-display font-bold tracking-tighter uppercase mt-4">Wess Storybook</h1>
             </div>
             <a href={withPrefix("/")} className="font-mono text-[10px] hover:line-through opacity-50">Voltar ao Portfólio ↑</a>
          </header>
@@ -53,7 +53,7 @@ export default function ProtocolPage() {
                   </div>
                   <div className="border-b border-black/5 pb-8">
                      <p className="font-mono text-[9px] opacity-30 mb-4 uppercase font-bold">Sub-Display Scale (2XL)</p>
-                     <h2 className="text-2xl font-display font-bold uppercase tracking-tight">Secundário_Sub_Titulos.v1</h2>
+                     <h2 className="text-2xl font-display font-bold uppercase tracking-tight">SECUNDÁRIO_SUBTÍTULOS.v1</h2>
                   </div>
                   <div className="border-b border-black/5 pb-8">
                      <p className="font-mono text-[9px] opacity-30 mb-4 uppercase font-bold">Body Scale (Satoshi)</p>
@@ -61,7 +61,7 @@ export default function ProtocolPage() {
                   </div>
                   <div className="border-b border-black/5 pb-8">
                      <p className="font-mono text-[9px] opacity-30 mb-4 uppercase font-bold">Mono Scale (Geist Mono)</p>
-                     <span className="font-mono text-[10px] uppercase tracking-[0.4em] font-bold">PROTOCOL_VERSION_LOG_METRICS_2026</span>
+                     <span className="font-mono text-[10px] uppercase tracking-[0.4em] font-bold">MÉTRICAS_DE_SISTEMA_2026</span>
                   </div>
                </div>
             </section>

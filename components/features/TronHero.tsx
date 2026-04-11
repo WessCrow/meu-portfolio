@@ -150,10 +150,10 @@ export function TronHero({
     ];
 
     const SKILLS = [
-      '<p class="skills-line">\n  Cluster 01 [INTELLIGENCE]\n  AI Engineering\n  Neural Research\n  Prompt Optimization\n  Data-Driven Solutions\n</p>',
-      '<p class="skills-line">\n  Cluster 02 [INTERFACE]\n  Visual Architecture\n  Design Systems\n  UI Precision\n  Accessibility Protocols\n</p>',
-      '<p class="skills-line">\n  Cluster 03 [STRATEGY]\n  Product Thinking\n  Journey Refactoring\n  Service Design\n  ROI Metrics\n</p>',
-      '<p class="skills-line">\n  Cluster 04 [INNOVATION]\n  Systems Thinking\n  Prototyping (Low/High)\n  Emerging Tech\n  Strategic Leadership\n</p>'
+      '<p class="skills-line">\n  Cluster 01 [INTELIGÊNCIA]\n  Fluxos com IA\n  Descoberta Rápida\n  Sistemas de Prompt\n  Decisão por Dados\n</p>',
+      '<p class="skills-line">\n  Cluster 02 [INTERFACE]\n  Design Systems\n  UX de Precisão\n  Interfaces Acessíveis\n  UI Escalável\n</p>',
+      '<p class="skills-line">\n  Cluster 03 [ESTRATÉGIA]\n  Pensamento de Produto\n  Jornadas Otimizadas\n  Service Design\n  Métricas de ROI\n</p>',
+      '<p class="skills-line">\n  Cluster 04 [INOVAÇÃO]\n  Pensamento Sistêmico\n  Prototipação Ágil\n  Tecnologias Emergentes\n  Liderança Estratégica\n</p>'
     ];
 
     const makeLines = () => {
@@ -413,7 +413,7 @@ export function TronHero({
               transition={{ delay: 0.2, duration: 0.8 }}
               className="font-mono font-bold text-[10px] md:text-xs lg:text-sm tracking-[0.2em]"
             >
-              Olá eu sou o
+              Olá, eu sou o
             </motion.span>
             <motion.img
               initial={{ opacity: 0, filter: "blur(10px)", scale: 1.1 }}
@@ -429,7 +429,7 @@ export function TronHero({
               transition={{ delay: 0.5, duration: 1 }}
               className="font-body text-xs md:text-sm lg:text-base opacity-60 max-w-[320px] md:max-w-[700px] leading-relaxed font-medium hidden md:block"
             >
-              Designer com 18 anos de trajetória em produtos digitais. Minha diretriz é clara: utilizo Inteligência Artificial para otimizar processos morosos e entregar interfaces de alta resolução para serviços que escalam.
+              Designer com 18 anos de experiência em produtos digitais. Utilizo IA para acelerar discovery, reduzir retrabalho e entregar interfaces de alta performance para negócios que escalam.
             </motion.p>
           </div>
         </motion.div>

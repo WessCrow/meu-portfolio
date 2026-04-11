@@ -126,7 +126,7 @@ export default function ProposalBuilder({
       <div className="px-[var(--spacing-section)] py-[var(--spacing-section-y)]">
         <ScrollReveal delay={0.2}>
           <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[600px] mb-12">
-            Selecione os módulos desejados, ajuste os parâmetros de execução e visualize instantaneamente o escopo técnico e financeiro.
+            Personalize serviços e parâmetros técnicos para gerar um orçamento estimado. Selecione os módulos desejados, ajuste os parâmetros de execução e visualize instantaneamente o escopo técnico e financeiro.
           </p>
         </ScrollReveal>
 

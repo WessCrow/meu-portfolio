@@ -154,7 +154,7 @@ export default function WessPortfolio() {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className={`hidden md:inline opacity-50 tracking-widest uppercase drop-shadow-md ${isDarkMode ? "text-white" : "text-black"}`}>Wess // Strategic Designer</span>
+              <span className={`hidden md:inline opacity-50 tracking-widest uppercase drop-shadow-md ${isDarkMode ? "text-white" : "text-black"}`}>Wess // Designer Estratégico</span>
               <span className={`md:hidden opacity-50 tracking-widest uppercase drop-shadow-md ${isDarkMode ? "text-white" : "text-black"}`}>Wess // Designer</span>
             </div>
 
@@ -223,28 +223,28 @@ export default function WessPortfolio() {
         <section className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted transition-colors divide-x divide-muted ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
           <div className="md:col-span-3 p-[var(--spacing-section)] flex items-center justify-center font-mono text-[10px] uppercase opacity-50 tracking-widest text-ink font-bold gap-3">
             <Activity size={12} aria-hidden="true" />
-            PROTOCOLOS_ATIVOS.39y
+            TEMPO_DE_OPERAÇÃO // DESDE_2008
           </div>
           <div className="md:col-span-3 p-[var(--spacing-section)] flex flex-col gap-2 group hover:bg-surface-sunken transition-colors">
             <div className="flex justify-between items-start">
-              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">IA_ACCELERATION_LOG</span>
+              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">STATUS_WORKFLOW_IA</span>
               <Terminal size={12} className="opacity-10 group-hover:opacity-40" />
             </div>
             <span className="font-mono text-[11px] font-bold uppercase tracking-tighter">HABILITADO</span>
           </div>
           <div className="md:col-span-3 p-[var(--spacing-section)] flex flex-col gap-2 group hover:bg-surface-sunken transition-colors">
             <div className="flex justify-between items-start">
-              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">UX_DESIGNER_LOG</span>
+              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">FUNÇÃO_ATUAL</span>
               <Eye size={12} className="opacity-10 group-hover:opacity-40" />
             </div>
             <span className="font-mono text-[11px] font-bold uppercase tracking-tighter">SÊNIOR_ESTRATÉGICO</span>
           </div>
           <div className="md:col-span-3 p-[var(--spacing-section)] flex flex-col gap-2 group hover:bg-surface-sunken transition-colors">
             <div className="flex justify-between items-start">
-              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">VISUAL_PRECISION_LOG</span>
+              <span className="font-mono text-[8px] opacity-30 uppercase tracking-[0.4em] font-bold">ESPECIALIDADE_CORE</span>
               <Fingerprint size={12} className="opacity-10 group-hover:opacity-40" />
             </div>
-            <span className="font-mono text-[11px] font-bold uppercase tracking-tighter">ESPECIALISTA</span>
+            <span className="font-mono text-[11px] font-bold uppercase tracking-tighter">SISTEMAS_DIGITAIS</span>
           </div>
         </section>
 
@@ -268,7 +268,7 @@ export default function WessPortfolio() {
             <ProjectRow
               step="01"
               title="GC-HDLAB"
-              desc="[REFAC] Refatoração Capacity: Migração de Power Apps para sistema independente via High-Performance UX."
+              desc="[REFAC] Refatoração estratégica: migração de Power Apps para plataforma independente com UX de alta performance."
               img={withPrefix("/img/mockup_hdlab.png")}
               icon={Target}
               onClick={() => setActiveCase("hdlab")}
@@ -277,7 +277,7 @@ export default function WessPortfolio() {
             <ProjectRow
               step="02"
               title="BioAIDesign"
-              desc="[DATA] Framework Disrupta: Avaliação objetiva de inovação baseada em IA e dados técnicos."
+              desc="[DATA] Framework de inovação: avaliação objetiva baseada em IA, dados e viabilidade real."
               img={withPrefix("/img/mockup_bioai.png")}
               icon={Fingerprint}
               onClick={() => setActiveCase("bioai")}
@@ -286,7 +286,7 @@ export default function WessPortfolio() {
             <ProjectRow
               step="03"
               title="Anestesia Pediátrica"
-              desc="[RISK] Design Estratégico: Mitigação de risco clínico em ambientes de alta complexidade."
+              desc="[RISK] Design estratégico: mitigação de risco clínico em ambientes de alta complexidade."
               img={withPrefix("/img/mockup_anestesia.png")}
               icon={Eye}
               onClick={() => setActiveCase("anestesia")}
@@ -295,7 +295,7 @@ export default function WessPortfolio() {
             <ProjectRow
               step="04"
               title="Youcom"
-              desc="[BEHAVIOR] Design Estratégico: Mapeamento de comportamento digital e interfaces de alta conversão para o varejo."
+              desc="[BEHAVIOR] Estratégia digital: comportamento do usuário e interfaces de alta conversão para varejo."
               img={withPrefix("/img/thumb_yc.png")}
               icon={Plus}
               onClick={() => setActiveCase("youcom")}
@@ -342,11 +342,9 @@ export default function WessPortfolio() {
             <div className="col-span-12 px-[var(--spacing-section)] py-[var(--spacing-section-y)] md:p-32 flex flex-col items-start justify-center relative overflow-hidden group min-h-[60vh] transition-colors bg-white text-black">
               <ScrollReveal>
                 <h2 className="text-3xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase text-black max-w-none md:max-w-none text-left relative z-10 transition-transform duration-1000 group-hover:translate-x-4">
-                  <AnimatedText text="Eu construo interfaces" type="words" stagger={0.1} delay={0.2} /> <br />
-                  <AnimatedText text="inteligentes e intuitivas." type="words" stagger={0.1} delay={0.4} /> <br />
-                  <AnimatedText text="Substituo incertezas por fluxos" type="words" stagger={0.1} delay={0.6} /> <br />
-                  <AnimatedText text="objetivos que guiam o usuário com clareza." type="words" stagger={0.1} delay={0.8} />
-
+                  <AnimatedText text="Transformo complexidade" type="words" stagger={0.1} delay={0.2} /> <br />
+                  <AnimatedText text="em produtos claros, escaláveis" type="words" stagger={0.1} delay={0.4} /> <br />
+                  <AnimatedText text="e orientados a resultado." type="words" stagger={0.1} delay={0.6} />
                 </h2>
               </ScrollReveal>
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/[0.01] to-transparent h-[100%] w-full animate-scan pointer-events-none opacity-50" />
@@ -356,10 +354,10 @@ export default function WessPortfolio() {
 
         {/* EXPERIENCE TILES */}
         <section className="section-light col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-muted min-h-[400px] divide-y md:divide-y-0 md:divide-x divide-muted transition-colors bg-white text-black">
-          <ScrollReveal delay={0.1}><ExpCell isDark={false} id="01" entity="EINSTEIN" role="Gestor de Inovação" desc="[HEALTH_TECH] Design estratégico aplicado à alta complexidade do setor de saúde. [DEPLOY] Desenvolvimento de interfaces de alta resolução e sistemas de suporte à decisão clínica." icon={Terminal} /></ScrollReveal>
-          <ScrollReveal delay={0.2}><ExpCell isDark={false} id="02" entity="COMPASSO UOL" role="Líder de Produto" desc="[RETAIL_STRATEGY] Direcionamento estratégico para grandes players do varejo global. [SCALE] Foco rigoroso em escalabilidade de interface e métricas de performance (ROI)." icon={Search} /></ScrollReveal>
-          <ScrollReveal delay={0.3}><ExpCell isDark={false} id="03" entity="BRADESCO / SABION" role="UX/UI Estrategista" desc="[FINTECH_LOG] Entrega de interfaces centradas em resultados para plataformas bancárias de larga escala. [CONVERSION] Otimização de fluxos transacionais com foco em experiência do usuário e segurança." icon={Activity} /></ScrollReveal>
-          <ScrollReveal delay={0.4}><ExpCell isDark={false} id="04" entity="TITANS GROUP" role="UX/UI" desc="[LATAM_MARKET] Arquitetura de soluções digitais escaláveis para o mercado LatAm e produtos proprietários. [PRODUCT_CORE] Estruturação de MVPs e evolução de ecossistemas digitais B2B e B2C." icon={Pointer} /></ScrollReveal>
+          <ScrollReveal delay={0.1}><ExpCell isDark={false} id="01" entity="EINSTEIN" role="Gestor de Inovação" desc="[HEALTH_TECH] Estratégia de design aplicada à alta complexidade do setor de saúde. [DEPLOY] Interfaces críticas e sistemas de suporte à decisão com foco em eficiência operacional." icon={Terminal} /></ScrollReveal>
+          <ScrollReveal delay={0.2}><ExpCell isDark={false} id="02" entity="COMPASSO UOL" role="Líder de Produto" desc="[RETAIL_STRATEGY] Direcionamento estratégico para operações globais de varejo. [SCALE] Interfaces escaláveis, performance contínua e crescimento guiado por métricas." icon={Search} /></ScrollReveal>
+          <ScrollReveal delay={0.3}><ExpCell isDark={false} id="03" entity="BRADESCO / SABION" role="UX/UI Estrategista" desc="[FINTECH_LOG] Soluções digitais para plataformas bancárias de larga escala. [CONVERSION] Fluxos transacionais otimizados com foco em experiência, segurança e conversão." icon={Activity} /></ScrollReveal>
+          <ScrollReveal delay={0.4}><ExpCell isDark={false} id="04" entity="TITANS GROUP" role="UX/UI" desc="[LATAM_MARKET] Arquitetura de produtos digitais escaláveis para mercado LatAm. [PRODUCT_CORE] Estruturação de MVPs e evolução de ecossistemas B2B e B2C." icon={Pointer} /></ScrollReveal>
         </section>
 
         {/* ABOUT SECTION */}
@@ -395,7 +393,7 @@ export default function WessPortfolio() {
             <div className="relative z-20 px-[var(--spacing-section)] py-[var(--spacing-section-y)] flex flex-col gap-16 max-w-[1400px]">
               <ScrollReveal delay={0.1}>
                 <h2 className="text-[50px] font-display font-bold tracking-tighter uppercase leading-[0.9] max-w-[1200px] text-ink">
-                  A CONVERGÊNCIA <br /> ESTRATÉGICA ENTRE   <br /> DESIGN E ENGENHARIA.
+                  A CONVERGÊNCIA <br /> ENTRE DESIGN,   <br /> NEGÓCIO E EXECUÇÃO.
                 </h2>
               </ScrollReveal>
 
@@ -404,7 +402,7 @@ export default function WessPortfolio() {
                   <div className="flex flex-col gap-6">
                     <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">// SOBRE_O_WESS</span>
                     <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[480px]">
-                      Minha jornada iniciada em 2008 consolidou uma visão única na intersecção entre a estética visual e o rigor do código. Como UX/UI sênior, não entrego apenas telas; eu projeto sistemas que substituem a incerteza do negócio por fluxos objetivos e de alta conversão, guiando o usuário com clareza absoluta.
+                      Minha jornada iniciada em 2008 consolidou uma visão estratégica entre design, tecnologia e crescimento. Como UX/UI sênior, não entrego apenas interfaces; projeto sistemas que reduzem fricção, aceleram decisões e transformam objetivos de negócio em experiências claras e escaláveis.
                     </p>
                   </div>
                 </ScrollReveal>
@@ -413,7 +411,7 @@ export default function WessPortfolio() {
                   <div className="flex flex-col gap-6 lg:pl-12">
                     <span className="font-mono text-[9px] opacity-40 uppercase tracking-[0.4em] italic font-black">// METODOLOGIA: O DIAMANTE ACELERADO POR IA</span>
                     <p className="font-body text-sm md:text-base opacity-60 leading-loose max-w-[480px]">
-                      Minha abordagem redefine o Double Diamond tradicional. Integro Inteligência Artificial como um motor de agilidade em cada fase do processo. Enquanto o design tradicional diverge e converge, a IA me permite comprimir o tempo de descoberta e validar hipóteses em tempo recorde. Isso resulta em protótipos de alta fidelidade que antecipam falhas e garantem o ROI antes mesmo do deploy.
+                      Minha abordagem evolui o Double Diamond tradicional com IA aplicada em cada etapa do processo. Isso acelera discovery, reduz ciclos de validação e aumenta precisão nas decisões. O resultado são protótipos de alta fidelidade, menos retrabalho e ROI mais rápido após o deploy.
                     </p>
                   </div>
                 </ScrollReveal>
@@ -426,7 +424,7 @@ export default function WessPortfolio() {
                   index="01"
                   subtitle="Discovery / Research"
                   title="DESCOBERTA"
-                  description="IA analisa dados de comportamento e gera insights instantâneos, eliminando semanas de pesquisa manual."
+                  description="IA sintetiza dados, padrões e oportunidades, reduzindo semanas de análise manual."
                   icon={<IconDescoberta />}
                   isDark={false}
                 />
@@ -434,7 +432,7 @@ export default function WessPortfolio() {
                   index="02"
                   subtitle="Strategy / definition"
                   title="DEFINIÇÃO"
-                  description="Mapeamento veloz de pontos críticos e gargalos na jornada do usuário com previsibilidade de impacto."
+                  description="Priorização veloz de gargalos críticos com clareza de impacto e viabilidade."
                   icon={<IconDefinicao />}
                   isDark={false}
                 />
@@ -442,7 +440,7 @@ export default function WessPortfolio() {
                   index="03"
                   subtitle="Prototype / High-Res"
                   title="DESENVOLVIMENTO"
-                  description="Geração de código e protótipos de alta resolução otimizados por IA para testes imediatos."
+                  description="Protótipos e sistemas escaláveis criados com velocidade para testes imediatos."
                   icon={<IconDesenvolvimento />}
                   isDark={false}
                 />
@@ -450,7 +448,7 @@ export default function WessPortfolio() {
                   index="04"
                   subtitle="Technical / Validation"
                   title="ENTREGA"
-                  description="Validação contínua e refinamento técnico para garantir um produto escalável e impecável."
+                  description="Validação contínua e refinamento técnico para garantir crescimento sustentável."
                   icon={<IconEntrega />}
                   isDark={false}
                 />
@@ -468,9 +466,9 @@ export default function WessPortfolio() {
             <div className="flex flex-col gap-2">
               <a href="mailto:contateowess@gmail.com" className="text-xl md:text-2xl font-display font-bold tracking-tighter hover:line-through transition-all lowercase">contateowess@gmail.com</a>
               <div className="flex flex-col font-mono text-[11px] opacity-40 tracking-widest uppercase gap-1">
-                <span>log_Brasil</span>
+                <span>localização_Brasil</span>
                 <div className="flex items-center gap-2">
-                  <span>Terminal_sempre_disponível</span>
+                  <span>terminal_disponível</span>
                   <div className="w-2 h-2 bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] rounded-sm" />
                 </div>
               </div>
@@ -486,12 +484,12 @@ export default function WessPortfolio() {
           </div>
 
           <div className="px-6 md:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-8 mb-16 font-mono text-[10px] tracking-[0.2em] opacity-40 uppercase">
-            <span>©2026 Design & Codificação feito com emoção.</span>
+            <span>©2026 Design & Codificação feitos com propósito.</span>
             <button
               onClick={() => setIsDrawerOpen(true)}
               className="hover:line-through transition-all uppercase cursor-none"
             >
-              Vamos conversar →
+              Iniciar conversa →
             </button>
             <span>DEUS_NO_CONTROLE</span>
           </div>

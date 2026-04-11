@@ -23,9 +23,13 @@
     "clicks": {}
   },
   "2026-04-11": {
-    "total": 1,
+    "total": 3,
     "new": 0,
-    "returning": 1,
-    "clicks": {}
+    "returning": 3,
+    "clicks": {
+      "CASE 01\nGC-HDLAB.\nPROTOCOLO_H_FIDELITY_CASE_01\n\n[R": 1,
+      "VOLTAR_AO_TERMINAL": 2,
+      "CASE 03\nANESTESIA PEDIÁTRICA.\nPROTOCOLO_H_FIDELITY": 1
+    }
   }
 }

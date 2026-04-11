@@ -87,7 +87,7 @@ export default function ContactDrawer({ isOpen, onClose, onSubmit, isDark }: Con
             {/* FORM */}
             <form onSubmit={handleSubmit} className="flex-1 p-8 flex flex-col gap-8 relative z-10">
               <p className="font-body text-sm opacity-50 leading-relaxed">
-                Por favor, preencha os dados abaixo para que eu possa entrar em contato sobre esta proposta.
+                Preencha os dados abaixo para que eu possa entrar em contato sobre esta proposta.
               </p>
 
               <div className="flex flex-col gap-6">
