@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
-      <body>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         {/* WCAG 2.4.1 — Skip Navigation Link */}
         <a
           href="#main-content"
@@ -25,7 +25,7 @@ export default function RootLayout({
         <AnalyticsTracker />
         {children}
         {/* GLOBAL CHROMATIC ABERRATION FILTER */}
-        <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none', opacity: 0 }}>
+        <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none', opacity: 0 }} suppressHydrationWarning>
           <defs>
             <filter id="chromatic-aberration" x="-10%" y="-10%" width="120%" height="120%">
               <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="red" />

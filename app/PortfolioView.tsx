@@ -136,7 +136,10 @@ export default function WessPortfolio() {
   if (!isMounted) return null;
 
   return (
-    <div className={`relative min-h-screen overflow-x-hidden selection:bg-ink selection:text-canvas cursor-none transition-colors duration-1000 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+    <div 
+      suppressHydrationWarning 
+      className={`relative min-h-screen overflow-x-hidden selection:bg-ink selection:text-canvas cursor-none transition-colors duration-1000 ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}
+    >
       <AnimatePresence>
         {isLoading && <LiquidLoader onComplete={() => setIsLoading(false)} isDarkMode={isDarkMode} />}
       </AnimatePresence>

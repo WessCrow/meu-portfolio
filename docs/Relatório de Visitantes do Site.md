@@ -11,7 +11,6 @@ Registrar e acompanhar métricas de acesso e comportamento dos usuários no site
 | 2026-04-08 | 2 | 2 | 0 | CASE 01
 GC-HDLAB.
 PROTOCOLO_H_FIDELITY_CASE_01
-
 [R |
 ---
 ## 📌 Definições
@@ -32,3 +31,5 @@ Você pode expandir este relatório com:
 - Taxa de rejeição (bounce rate)
 - Dispositivos (mobile vs desktop)
 - Origem de tráfego (orgânico, pago, direto)
+| 2026-04-10 | 2 | 0 | 2 | - |
+| 2026-04-11 | 1 | 0 | 1 | - |

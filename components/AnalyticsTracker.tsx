@@ -15,9 +15,11 @@ export default function AnalyticsTracker() {
       isNew = true;
     }
 
+    const BASE_PATH = process.env.NODE_ENV === 'production' ? "/meu-portfolio" : "";
+    
     // Only track one visit per session to avoid inflating numbers on refresh
     if (!sessionTracked) {
-      fetch("/meu-portfolio/api/analytics/", {
+      fetch(`${BASE_PATH}/api/analytics/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,7 +64,7 @@ export default function AnalyticsTracker() {
         // Limit name length
         name = name.substring(0, 50);
 
-        fetch("/meu-portfolio/api/analytics/", {
+        fetch(`${BASE_PATH}/api/analytics/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

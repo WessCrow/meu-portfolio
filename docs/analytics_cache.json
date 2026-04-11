@@ -15,5 +15,17 @@
     "clicks": {
       "CASE 01\nGC-HDLAB.\nPROTOCOLO_H_FIDELITY_CASE_01\n\n[R": 1
     }
+  },
+  "2026-04-10": {
+    "total": 2,
+    "new": 0,
+    "returning": 2,
+    "clicks": {}
+  },
+  "2026-04-11": {
+    "total": 1,
+    "new": 0,
+    "returning": 1,
+    "clicks": {}
   }
 }
