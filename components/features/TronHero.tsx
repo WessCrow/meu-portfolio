@@ -12,11 +12,11 @@ interface TronHeroProps {
   cursorYSpring?: any;
 }
 
-export function TronHero({ 
-  isDarkMode, 
-  heroRef, 
-  cursorXSpring, 
-  cursorYSpring 
+export function TronHero({
+  isDarkMode,
+  heroRef,
+  cursorXSpring,
+  cursorYSpring
 }: TronHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -185,8 +185,8 @@ export function TronHero({
         this.holdTimer = 0;
         this.typeSpeed = 10 + Math.floor(Math.random() * 15);
         this.deleteSpeed = 5 + Math.floor(Math.random() * 10);
-        this.holdDuration = 360; 
-        this.alpha = 0.2; 
+        this.holdDuration = 360;
+        this.alpha = 0.2;
       }
 
       tick() {
@@ -221,7 +221,7 @@ export function TronHero({
         const size = (FONT_PX * 0.90) * mainScale;
         ctx.font = `bold ${size}px "Geist Mono", monospace`;
 
-        const baseC = isDarkMode ? 255 : 0; 
+        const baseC = isDarkMode ? 255 : 0;
         ctx.fillStyle = `rgba(${baseC}, ${baseC}, ${baseC}, ${this.alpha})`;
 
         const isRightSide = this.x > (ctx.canvas.width / window.devicePixelRatio) / 2;
