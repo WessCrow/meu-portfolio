@@ -1,0 +1,796 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   W+SHADERS v0.7 — ANALOG INSTRUMENT INTERFACE
+   Archetype: Machined Dark Hardware / Premium Studio Control Surface
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── IMPORT: Typography ── */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Geist+Mono:wght@100..900&display=swap');
+
+/* ── 1. Design Tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Surface layers — dark aluminum depth system */
+  --s0:  #000000;   /* absolute void */
+  --s1:  #080808;   /* base matte */
+  --s2:  #0E0E0E;   /* panel surface */
+  --s3:  #141414;   /* raised element */
+  --s4:  #1C1C1C;   /* control surface */
+  --s5:  #242424;   /* hover/highlight */
+
+  /* Foreground */
+  --fg:        #E8E8E8;
+  --fg-mid:    rgba(232,232,232,0.55);
+  --fg-dim:    rgba(232,232,232,0.28);
+  --fg-ghost:  rgba(232,232,232,0.10);
+
+  /* Edges — precision machined */
+  --edge-hi:   rgba(255,255,255,0.14);  /* top/left catch-light */
+  --edge-lo:   rgba(0,0,0,0.65);        /* bottom/right shadow */
+  --edge-mid:  rgba(255,255,255,0.07);
+  --edge-lit:  rgba(255,255,255,0.42);
+
+  /* Active accent — warm silver, not neon */
+  --accent:    rgba(220,220,215,0.90);
+  --accent-bg: rgba(255,255,255,0.06);
+
+  /* Typography */
+  --font: "Geist Mono", "IBM Plex Mono", monospace;
+
+  /* HUD geometry */
+  --hud-w:  288px;
+  --r-sm:   2px;
+  --r-md:   3px;
+  --r-lg:   5px;
+}
+
+/* ── 2. Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--s0);
+  color: var(--fg);
+  font-family: var(--font);
+  /* subtle grain — matte material feel */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.09) 3px,
+      rgba(0,0,0,0.09) 4px
+    );
+}
+
+/* Material grain overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 192px 192px;
+  mix-blend-mode: overlay;
+}
+
+/* Vignette */
+.fullscreen-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ── 3. Layout ────────────────────────────────────────────────────────────── */
+.fullscreen-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.canvas-fullscreen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.canvas-fullscreen canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  image-rendering: pixelated;
+}
+
+/* ── 4. Site Header ──────────────────────────────────────────────────────── */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: 44px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--edge-hi);
+  box-shadow:
+    0 1px 0 var(--edge-lo),
+    0 2px 16px rgba(0,0,0,0.7),
+    inset 0 -1px 0 var(--edge-mid);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.site-logo {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--fg);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 26px;
+  background: var(--s2);
+  border: 1px solid var(--edge-hi);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--fg-dim);
+  font-family: var(--font);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  padding: 0 10px;
+  height: 100%;
+  transition: color 100ms ease, background 100ms ease;
+  outline: none;
+}
+
+.lang-btn:hover  { color: var(--fg); background: rgba(255,255,255,0.04); }
+.lang-btn.active { color: var(--fg); }
+
+.lang-sep {
+  width: 1px;
+  height: 12px;
+  background: var(--edge-mid);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ── 5. Editor Panel — floats below header ───────────────────────────────── */
+.editor-panel {
+  position: fixed;
+  top: 44px;           /* flush below header */
+  right: 0;
+  z-index: 100;
+  width: var(--hud-w);
+  height: calc(100vh - 44px);
+  overflow-y: auto;
+  background: var(--s1);
+  border-left: 1px solid var(--edge-hi);
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: none;
+  box-shadow:
+    -4px 0 24px rgba(0,0,0,0.7),
+    inset 1px 0 0 rgba(255,255,255,0.02);
+}
+
+.editor-panel::-webkit-scrollbar { display: none; }
+
+/* keep legacy .hud-panel for any remaining usage */
+.hud-panel {
+  position: fixed;
+  top: 44px;
+  right: 0;
+  z-index: 100;
+  width: var(--hud-w);
+  height: calc(100vh - 44px);
+  overflow-y: auto;
+  background: var(--s1);
+  border-left: 1px solid var(--edge-hi);
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: none;
+}
+
+.hud-panel::-webkit-scrollbar { display: none; }
+
+/* ── 6. HUD Section ───────────────────────────────────────────────────────── */
+.hud-section {
+  border-bottom: 1px solid var(--edge-mid);
+  padding: 13px 16px;
+  position: relative;
+}
+
+/* Left accent — instrument channel strip */
+.hud-section::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: transparent;
+  transition: background 150ms ease;
+}
+
+.hud-section:hover::before {
+  background: var(--edge-lit);
+}
+
+.hud-section-toggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  outline: none;
+}
+
+.hud-label-inline {
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.20em;
+  color: var(--fg-mid);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hud-label-inline::before {
+  content: "▸";
+  font-size: 7px;
+  color: var(--fg-dim);
+  flex-shrink: 0;
+}
+
+.hud-chevron {
+  font-size: 6px;
+  color: var(--fg-dim);
+  font-family: var(--font);
+}
+
+.hud-label-sm {
+  font-family: var(--font);
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-dim);
+  display: block;
+}
+
+.hud-value {
+  font-family: var(--font);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-desc {
+  font-family: var(--font);
+  font-size: 7px;
+  color: var(--fg-dim);
+  line-height: 1.45;
+  margin-top: 1px;
+}
+
+.hud-section-body {
+  margin-top: 11px;
+}
+
+/* ── 7. Buttons — machined push controls ─────────────────────────────────── */
+.hud-btn {
+  /* Layered dark surface */
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(0,0,0,0.0) 40%,
+      rgba(0,0,0,0.15) 100%
+    ),
+    var(--s3);
+
+  border: 1px solid var(--edge-hi);
+  border-bottom-color: var(--edge-lo);
+  border-radius: var(--r-sm);
+
+  /* Physical depth */
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.6),
+    0 2px 4px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+
+  color: var(--fg-mid);
+  font-family: var(--font);
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 7px 10px;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  transition:
+    background 100ms ease,
+    box-shadow 100ms ease,
+    color 100ms ease,
+    transform 60ms ease;
+
+  /* Prevent layout shift on press */
+  will-change: transform;
+}
+
+.hud-btn:hover {
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.09) 0%,
+      rgba(255,255,255,0.02) 40%,
+      rgba(0,0,0,0.10) 100%
+    ),
+    var(--s4);
+  color: var(--fg);
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.5),
+    0 3px 6px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.25);
+}
+
+/* Pressed / active — physically depressed */
+.hud-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 0px 0 rgba(0,0,0,0.5),
+    0 1px 2px rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(255,255,255,0.03);
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,0.1) 0%,
+      rgba(255,255,255,0.02) 100%
+    ),
+    var(--s2);
+}
+
+/* Engaged state — illuminated indicator */
+.hud-btn.active {
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.10) 0%,
+      rgba(255,255,255,0.03) 100%
+    ),
+    var(--s4);
+  border-color: var(--edge-lit);
+  color: var(--fg);
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.5),
+    0 2px 5px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* Primary action button */
+.hud-btn--primary {
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.10) 0%,
+      rgba(255,255,255,0.03) 50%,
+      rgba(0,0,0,0.08) 100%
+    ),
+    var(--s4) !important;
+  border-color: var(--edge-lit) !important;
+  color: var(--fg) !important;
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.5),
+    0 2px 6px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.14) !important;
+}
+
+.hud-btn--primary:hover {
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.14) 0%,
+      rgba(255,255,255,0.05) 100%
+    ),
+    var(--s5) !important;
+}
+
+.hud-btn.w-full { width: 100%; }
+.hud-btn.flex-1 { flex: 1; }
+
+/* ── 8. Range Slider — analog console fader ───────────────────────────────── */
+input[type=range].steampunk-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+  margin: 4px 0 2px;
+  cursor: pointer;
+}
+
+input[type=range].steampunk-slider:focus { outline: none; }
+
+/* Track — recessed channel */
+input[type=range].steampunk-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 3px;
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,0.7) 0%,
+      var(--s1) 60%,
+      rgba(255,255,255,0.04) 100%
+    );
+  border-top: 1px solid rgba(0,0,0,0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-radius: 1px;
+}
+
+/* Thumb — precision machined fader knob */
+input[type=range].steampunk-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 10px;
+  margin-top: -7px;
+  background:
+    linear-gradient(180deg,
+      var(--s5) 0%,
+      var(--s3) 50%,
+      var(--s2) 100%
+    );
+  border: 1px solid var(--edge-hi);
+  border-bottom-color: rgba(0,0,0,0.5);
+  border-radius: var(--r-sm);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+  transition: background 100ms ease, box-shadow 100ms ease;
+  cursor: grab;
+}
+
+input[type=range].steampunk-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  background:
+    linear-gradient(180deg,
+      var(--s4) 0%,
+      var(--s2) 100%
+    );
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.8),
+    inset 0 1px 3px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+input[type=range].steampunk-slider:hover::-webkit-slider-thumb {
+  background:
+    linear-gradient(180deg,
+      var(--s5) 0%,
+      var(--s4) 50%,
+      var(--s3) 100%
+    );
+  border-color: var(--edge-lit);
+}
+
+/* Firefox */
+input[type=range].steampunk-slider::-moz-range-track {
+  height: 3px;
+  background: var(--s1);
+  border: 1px solid rgba(0,0,0,0.5);
+  border-radius: 1px;
+}
+
+input[type=range].steampunk-slider::-moz-range-thumb {
+  height: 16px;
+  width: 10px;
+  background: linear-gradient(180deg, var(--s5) 0%, var(--s3) 100%);
+  border: 1px solid var(--edge-hi);
+  border-radius: var(--r-sm);
+}
+
+/* ── 9. Textarea — recessed input well ───────────────────────────────────── */
+.hud-textarea {
+  width: 100%;
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,0.4) 0%,
+      var(--s1) 100%
+    );
+  border: 1px solid rgba(0,0,0,0.6);
+  border-top-color: rgba(0,0,0,0.8);
+  border-bottom-color: var(--edge-hi);
+  border-right-color: var(--edge-hi);
+  border-radius: var(--r-sm);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(0,0,0,0.3);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 9px;
+  line-height: 1.55;
+  padding: 9px 11px;
+  resize: vertical;
+  outline: none;
+  letter-spacing: 0.04em;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.hud-textarea:focus {
+  border-color: var(--edge-mid);
+  border-bottom-color: var(--edge-lit);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.hud-textarea::placeholder {
+  color: var(--fg-ghost);
+}
+
+/* ── 10. Format grid ──────────────────────────────────────────────────────── */
+.format-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  margin-top: 8px;
+}
+
+/* ── 11. Color swatch ──────────────────────────────────────────────────────── */
+.color-swatch {
+  width: 34px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid var(--edge-hi);
+  border-bottom-color: var(--edge-lo);
+  border-radius: var(--r-sm);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  transition: border-color 100ms ease;
+}
+
+.color-swatch:hover {
+  border-color: var(--edge-lit);
+}
+
+/* ── 12. Palette swatches ─────────────────────────────────────────────────── */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+}
+
+.palette-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(0,0,0,0.4);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 100ms ease, transform 100ms ease, box-shadow 100ms ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.palette-swatch:hover {
+  border-color: var(--edge-lit);
+  transform: scale(1.18);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+/* ── 13. Status bar ───────────────────────────────────────────────────────── */
+.status-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 150;
+  height: 24px;
+  background: var(--s2);
+  border-top: 1px solid var(--edge-mid);
+  box-shadow: 0 -1px 8px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  pointer-events: none;
+}
+
+.status-bar::before {
+  content: "";
+  display: block;
+  width: 2px;
+  height: 100%;
+  background: var(--edge-lit);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.status-bar > * {
+  padding: 0 11px;
+  border-right: 1px solid var(--edge-mid);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.status-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--fg);
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(255,255,255,0.5);
+  flex-shrink: 0;
+  animation: blink-dot 1.6s ease-in-out infinite;
+}
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.15; }
+}
+
+.status-text {
+  font-family: var(--font);
+  font-size: 7px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+/* ── 14. Camera hint ─────────────────────────────────────────────────────── */
+.cam-hint {
+  position: fixed;
+  bottom: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 120;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 7px 18px;
+  background: var(--s2);
+  border: 1px solid var(--edge-mid);
+  border-radius: var(--r-md);
+  box-shadow:
+    0 2px 12px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  pointer-events: none;
+  animation: fadeout-hint 8s forwards ease-in;
+}
+
+@keyframes fadeout-hint {
+  0%, 65% { opacity: 1; }
+  100%     { opacity: 0; }
+}
+
+.cam-hint > span {
+  font-family: var(--font);
+  font-size: 7px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+/* ── 14b. Reset CTA ──────────────────────────────────────────────────────── */
+.reset-cta {
+  position: fixed;
+  bottom: 34px;
+  left: 14px;
+  z-index: 150;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.06) 0%,
+      rgba(0,0,0,0.1) 100%
+    ),
+    var(--s2);
+
+  border: 1px solid var(--edge-hi);
+  border-bottom-color: var(--edge-lo);
+  border-radius: var(--r-md);
+
+  box-shadow:
+    0 1px 0 rgba(0,0,0,0.6),
+    0 2px 8px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+
+  color: var(--fg-mid);
+  font-family: var(--font);
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 7px 14px;
+  cursor: pointer;
+  outline: none;
+  transition:
+    color 100ms ease,
+    background 100ms ease,
+    border-color 100ms ease,
+    transform 60ms ease;
+
+  animation: slide-in-left 200ms ease both;
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.reset-cta:hover {
+  color: var(--fg);
+  border-color: var(--edge-lit);
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.10) 0%,
+      rgba(255,255,255,0.02) 100%
+    ),
+    var(--s3);
+}
+
+.reset-cta:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 0 0 rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* ── 15. Utilities ────────────────────────────────────────────────────────── */
+.hidden          { display: none !important; }
+.flex            { display: flex; }
+.flex-col        { flex-direction: column; }
+.flex-1          { flex: 1; }
+.grid            { display: grid; }
+.grid-cols-2     { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3     { grid-template-columns: repeat(3, 1fr); }
+.gap-1           { gap: 3px; }
+.gap-2           { gap: 8px; }
+.items-center    { align-items: center; }
+.justify-between { justify-content: space-between; }
+.w-full          { width: 100%; }
+.mt-1            { margin-top: 4px; }
+.mt-2            { margin-top: 8px; }
+.mt-3            { margin-top: 12px; }
+.mb-1            { margin-bottom: 4px; }
+.font-bold       { font-weight: 700; }
+.uppercase       { text-transform: uppercase; }
+.text-8px        { font-size: 8px; }
+.text-9px        { font-size: 9px; }

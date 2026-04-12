@@ -8,7 +8,7 @@ Este documento centraliza todos os textos literais (exatamente como aparecem no 
 
 ### Branding & Logo
 - **Label de Introdução:** `Olá, eu sou o`
-- **Hero Paragraph:** `Designer com 18 anos de experiência. Utilizo IA para acelerar discovery, reduzir retrabalho e entregar interfaces de alta performance para negócios que escalam.`
+- **Hero Paragraph:** `Designer com 18 anos de experiência em produtos digitais. Utilizo IA para acelerar discovery, reduzir retrabalho e entregar interfaces de alta performance para negócios que escalam.`
 - **Desktop Brand:** `Wess // Designer Estratégico`
 - **Mobile Brand:** `Wess // Designer`
 
@@ -30,10 +30,10 @@ Este documento centraliza todos os textos literais (exatamente como aparecem no 
 
 Textos que aparecem na listagem principal de projetos:
 
-1. **GC-HDLAB [01]:** `[REFAC] Refatoração Capacity: Migração de Power Apps para sistema independente via High-Performance UX.`
-2. **BioAIDesign [02]:** `[DATA] Framework Disrupta: Avaliação objetiva de inovação baseada em IA e dados técnicos.`
-3. **Anestesia Pediátrica [03]:** `[RISK] Design Estratégico: Mitigação de risco clínico em ambientes de alta complexidade.`
-4. **Youcom [04]:** `[BEHAVIOR] Design Estratégico: Mapeamento de comportamento digital e interfaces de alta conversão para o varejo.`
+1. **GC-HDLAB [01]:** `[REFAC] Refatoração estratégica: migração de Power Apps para plataforma independente com UX de alta performance.`
+2. **BioAIDesign [02]:** `[DATA] Framework de inovação: avaliação objetiva baseada em IA, dados e viabilidade real.`
+3. **Anestesia Pediátrica [03]:** `[RISK] Design estratégico: mitigação de risco clínico em ambientes de alta complexidade.`
+4. **Youcom [04]:** `[BEHAVIOR] Estratégia digital: comportamento do usuário e interfaces de alta conversão para varejo.`
 
 ---
 
