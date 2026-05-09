@@ -22,15 +22,17 @@ export function ProjectRow({ step, title, desc, img, isDark, icon: Icon, onClick
   return (
     <motion.button
       type="button"
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => onClick && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onFocus={() => setIsHovered(true)}
+      onFocus={() => onClick && setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
       onClick={onClick}
-      whileHover={{ zIndex: 50, transition: { duration: 0 } }}
-      aria-label={`Ver case ${title}`}
+      disabled={!onClick}
+      whileHover={onClick ? { zIndex: 50, transition: { duration: 0 } } : {}}
+      aria-label={onClick ? `Ver case ${title}` : `${title} — em breve`}
+      aria-disabled={!onClick}
       style={{ backgroundColor: isHovered && hoverColor ? hoverColor : undefined }}
-      className="w-full text-left grid grid-cols-1 md:grid-cols-12 border-b border-muted py-6 px-4 md:p-[var(--spacing-section)] items-center group cursor-pointer hover:bg-surface-sunken transition-colors relative gap-y-4 md:gap-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+      className={`w-full text-left grid grid-cols-1 md:grid-cols-12 border-b border-muted py-6 px-4 md:p-[var(--spacing-section)] items-center group transition-colors relative gap-y-4 md:gap-y-0 ${onClick ? "hover:bg-surface-sunken focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black" : "opacity-30 pointer-events-none select-none"}`}
     >
       <div className="col-span-12 md:col-span-3 flex items-center gap-[var(--spacing-4)]">
         <div className="flex items-center gap-2">

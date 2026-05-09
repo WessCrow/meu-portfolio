@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { ASMRStaticBackground } from '@/components/ui/asmr-background';
+import { ParticleTextEditor } from '@/components/ui/particle-text-editor';
 import { TronEngine, loadFont, type CameraState, type DisturbanceMode } from './components/TronEngine';
 import { renderTextToBitmap, type TextFormat } from './components/TextBitmapEngine';
 import {
@@ -73,6 +75,9 @@ const T = {
     distSupernova:'Supernova',
     // Reset
     resetToLogo:  '← Voltar ao início',
+    viewEngine:   'Motor ASCII',
+    viewParticles:'Partículas',
+    viewAsmr:     'ASMR',
     // Status
     camHintOrbit: 'Arrastar para orbitar',
     camHintPan:   'Espaço + arrastar para mover',
@@ -131,6 +136,9 @@ const T = {
     distBlackhole:'Black hole',
     distSupernova:'Supernova',
     resetToLogo:  '← Back to start',
+    viewEngine:   'ASCII engine',
+    viewParticles:'Particles',
+    viewAsmr:     'ASMR',
     camHintOrbit: 'Drag to orbit',
     camHintPan:   'Space + drag to pan',
     camHintZoom:  'Scroll to zoom',
@@ -201,6 +209,7 @@ const CHAR_STYLE_LABELS: Record<CharStyle, string> = {
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [lang,   setLang]   = useState<Lang>('pt');
+  const [view,   setView]   = useState<'engine' | 'particles' | 'asmr'>('engine');
   const t = T[lang];
 
   const [config, setConfig] = useState<ShaderConfig>({ ...PRESETS.mono });
@@ -377,6 +386,76 @@ export default function App() {
   const toggleSection = (s: HudSection) =>
     setOpenSection(prev => prev === s ? 'text' : s);
 
+  if (view === 'asmr') {
+    return (
+      <div className="fullscreen-root particle-studio-scroll flex flex-col bg-[#0a0a0c]">
+        <header className="site-header">
+          <span className="site-logo">W-TTY</span>
+          <div className="header-right">
+            <button
+              type="button"
+              className="lang-btn active"
+              onClick={() => setView('engine')}
+            >
+              ← {t.viewEngine}
+            </button>
+            <span className="lang-sep">|</span>
+            <button
+              type="button"
+              className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}
+              onClick={() => setLang('pt')}
+              aria-label="Português"
+            >PT</button>
+            <span className="lang-sep">|</span>
+            <button
+              type="button"
+              className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+              onClick={() => setLang('en')}
+              aria-label="English"
+            >EN</button>
+          </div>
+        </header>
+        <main className="relative mt-[44px] min-h-0 w-full flex-1">
+          <ASMRStaticBackground lang={lang} className="absolute inset-0 h-full min-h-0" />
+        </main>
+      </div>
+    );
+  }
+
+  if (view === 'particles') {
+    return (
+      <div className="fullscreen-root particle-studio-scroll" style={{ background: '#0a0a0a' }}>
+        <header className="site-header">
+          <span className="site-logo">W-TTY</span>
+          <div className="header-right">
+            <button
+              type="button"
+              className="lang-btn active"
+              onClick={() => setView('engine')}
+            >
+              ← {t.viewEngine}
+            </button>
+            <span className="lang-sep">|</span>
+            <button
+              type="button"
+              className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}
+              onClick={() => setLang('pt')}
+              aria-label="Português"
+            >PT</button>
+            <span className="lang-sep">|</span>
+            <button
+              type="button"
+              className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+              onClick={() => setLang('en')}
+              aria-label="English"
+            >EN</button>
+          </div>
+        </header>
+        <ParticleTextEditor lang={lang} />
+      </div>
+    );
+  }
+
   return (
     <div className="fullscreen-root" style={{ background: config.bgColor }}>
       <video ref={videoRef} className="hidden" aria-hidden="true" muted playsInline />
@@ -405,6 +484,22 @@ export default function App() {
       <header className="site-header">
         <span className="site-logo">W-TTY</span>
         <div className="header-right">
+          <button
+            type="button"
+            className="lang-btn"
+            onClick={() => setView('particles')}
+          >
+            {t.viewParticles}
+          </button>
+          <span className="lang-sep">|</span>
+          <button
+            type="button"
+            className="lang-btn"
+            onClick={() => setView('asmr')}
+          >
+            {t.viewAsmr}
+          </button>
+          <span className="lang-sep">|</span>
           <button
             className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}
             onClick={() => setLang('pt')}

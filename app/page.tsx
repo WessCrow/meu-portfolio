@@ -6,9 +6,5 @@ const WessPortfolio = dynamic(() => import("./PortfolioView"), {
 });
 
 export default function Home() {
-  return (
-    <main>
-      <WessPortfolio />
-    </main>
-  );
+  return <WessPortfolio />;
 }

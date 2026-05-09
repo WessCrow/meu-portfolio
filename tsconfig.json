@@ -61,6 +61,11 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "wtty",
+    "wtype",
+    "wtype_metal",
+    "out",
+    "public"
   ]
 }

@@ -104,7 +104,7 @@ export default function ProposalBuilder({
 
 
   return (
-    <section id="proposal-builder" className={`section-light col-span-12 border-b border-muted flex flex-col transition-colors ${isDark ? 'bg-[#0F0F0F] text-white' : 'bg-white text-black'}`}>
+    <section id="proposal-builder" className={`section-light col-span-12 border-b border-muted hidden flex-col transition-colors ${isDark ? 'bg-[#0F0F0F] text-white' : 'bg-white text-black'}`}>
 
       {/* HEADER — same pattern as 002, 003, 004 */}
       <div className={`grid grid-cols-1 md:grid-cols-12 border-b border-muted ${isDark ? 'bg-[#0F0F0F] text-white' : 'bg-white text-black'}`}>

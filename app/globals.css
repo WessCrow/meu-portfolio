@@ -21,6 +21,15 @@ html {
   --accent-success: #22c55e;
   --accent-hazard: #FF2A2A;
 
+  /* Case study accent colors */
+  --color-case-hdlab:     #CBB9ED;
+  --color-case-bioai:     #B9C0D0;
+  --color-case-anestesia: #FEE4DB;
+  --color-case-youcom:    #C5E3E4;
+
+  /* Hero background (deeper than neutral-950) */
+  --color-hero-bg: #060606;
+
   /* 2. SEMANTIC TOKENS (Light Mode) */
   --color-canvas: var(--neutral-0);
   --color-surface: var(--neutral-0);
@@ -90,6 +99,11 @@ html {
 
   --color-accent-innovation: var(--accent-innovation);
   --color-accent-hazard: var(--accent-hazard);
+  --color-case-hdlab: var(--color-case-hdlab);
+  --color-case-bioai: var(--color-case-bioai);
+  --color-case-anestesia: var(--color-case-anestesia);
+  --color-case-youcom: var(--color-case-youcom);
+  --color-hero-bg: var(--color-hero-bg);
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);

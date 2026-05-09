@@ -1,10 +1,11 @@
+@import "tailwindcss";
+
 /* ═══════════════════════════════════════════════════════════════════════════
    W+SHADERS v0.7 — ANALOG INSTRUMENT INTERFACE
    Archetype: Machined Dark Hardware / Premium Studio Control Surface
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── IMPORT: Typography ── */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Geist+Mono:wght@100..900&display=swap');
+/* Typography: carregada via <link> em index.html (evita @import após regras do Tailwind). */
 
 /* ── 1. Design Tokens ─────────────────────────────────────────────────────── */
 :root {
@@ -100,6 +101,12 @@ body::after {
   overflow: hidden;
 }
 
+/* Modo estúdio partículas: permite rolagem do painel de edição */
+.fullscreen-root.particle-studio-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .canvas-fullscreen {
   position: absolute;
   inset: 0;
@@ -149,14 +156,22 @@ body::after {
   display: flex;
   align-items: center;
   gap: 0;
-  height: 26px;
+  min-height: 26px;
+  max-width: min(100vw - 120px, 520px);
   background: var(--s2);
   border: 1px solid var(--edge-hi);
   border-radius: var(--r-md);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  flex-shrink: 1;
   box-shadow:
     0 1px 4px rgba(0,0,0,0.5),
     inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.header-right::-webkit-scrollbar {
+  display: none;
 }
 
 .lang-btn {

@@ -215,7 +215,7 @@ export default function WessPortfolio() {
 
       <main id="main-content" className="pt-[53px] px-0 max-w-[1920px] m-0 min-h-[calc(100vh-53px)]">
         {/* TRON HERO */}
-        <section className={`col-span-12 h-[100dvh] min-h-[600px] -mt-[53px] pt-[53px] w-full flex items-center justify-center border-b border-muted overflow-hidden relative transition-colors duration-1000 ${isDarkMode ? 'bg-[#060606]' : 'bg-white'}`}>
+        <section className={`col-span-12 h-[100dvh] min-h-[600px] -mt-[53px] pt-[53px] w-full flex items-center justify-center border-b border-muted overflow-hidden relative transition-colors duration-1000 ${isDarkMode ? 'bg-[var(--color-hero-bg)]' : 'bg-white'}`}>
           <TronHero isDarkMode={isDarkMode} heroRef={heroRef} cursorXSpring={cursorXSpring} cursorYSpring={cursorYSpring} />
         </section>
 
@@ -265,23 +265,23 @@ export default function WessPortfolio() {
             </div>
           </div>
           <div className="flex flex-col">
+            {/* BioAIDesign — ATIVO */}
             <ProjectRow
               step="01"
-              title="GC-HDLAB"
-              desc="[REFAC] Refatoração estratégica: migração de Power Apps para plataforma independente com UX de alta performance."
-              img={withPrefix("/img/mockup_hdlab.png")}
-              icon={Target}
-              onClick={() => setActiveCase("hdlab")}
-              hoverColor="#CBB9ED"
-            />
-            <ProjectRow
-              step="02"
               title="BioAIDesign"
               desc="[DATA] Framework de inovação: avaliação objetiva baseada em IA, dados e viabilidade real."
               img={withPrefix("/img/mockup_bioai.png")}
               icon={Fingerprint}
               onClick={() => setActiveCase("bioai")}
-              hoverColor="#B9C0D0"
+              hoverColor="var(--color-case-bioai)"
+            />
+            {/* Demais cases — desabilitados (em breve) */}
+            <ProjectRow
+              step="02"
+              title="GC-HDLAB"
+              desc="[REFAC] Refatoração estratégica: migração de Power Apps para plataforma independente com UX de alta performance."
+              img={withPrefix("/img/mockup_hdlab.png")}
+              icon={Target}
             />
             <ProjectRow
               step="03"
@@ -289,8 +289,6 @@ export default function WessPortfolio() {
               desc="[RISK] Design estratégico: mitigação de risco clínico em ambientes de alta complexidade."
               img={withPrefix("/img/mockup_anestesia.png")}
               icon={Eye}
-              onClick={() => setActiveCase("anestesia")}
-              hoverColor="#FEE4DB"
             />
             <ProjectRow
               step="04"
@@ -298,8 +296,6 @@ export default function WessPortfolio() {
               desc="[BEHAVIOR] Estratégia digital: comportamento do usuário e interfaces de alta conversão para varejo."
               img={withPrefix("/img/thumb_yc.png")}
               icon={Plus}
-              onClick={() => setActiveCase("youcom")}
-              hoverColor="#C5E3E4"
             />
           </div>
         </section>
@@ -341,11 +337,11 @@ export default function WessPortfolio() {
           <div className="grid grid-cols-1 md:grid-cols-12">
             <div className="col-span-12 px-[var(--spacing-section)] py-[var(--spacing-section-y)] md:p-32 flex flex-col items-start justify-center relative overflow-hidden group min-h-[60vh] transition-colors bg-white text-black">
               <ScrollReveal>
-                <h2 className="text-3xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase text-black max-w-none md:max-w-none text-left relative z-10 transition-transform duration-1000 group-hover:translate-x-4">
+                <p className="text-3xl md:text-[50px] font-display font-bold leading-[1.1] tracking-tighter uppercase text-black max-w-none md:max-w-none text-left relative z-10 transition-transform duration-1000 group-hover:translate-x-4">
                   <AnimatedText text="Transformo complexidade" type="words" stagger={0.1} delay={0.2} /> <br />
                   <AnimatedText text="em produtos claros, escaláveis" type="words" stagger={0.1} delay={0.4} /> <br />
                   <AnimatedText text="e orientados a resultado." type="words" stagger={0.1} delay={0.6} />
-                </h2>
+                </p>
               </ScrollReveal>
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/[0.01] to-transparent h-[100%] w-full animate-scan pointer-events-none opacity-50" />
             </div>
@@ -459,6 +455,60 @@ export default function WessPortfolio() {
 
         {/* PROPOSAL BUILDER */}
         <ProposalBuilder isDark={false} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+
+        {/* PLAYGROUND SECTION */}
+        <section className="section-light col-span-12 flex flex-col transition-colors relative bg-white text-black border-b border-muted">
+          <div className="grid grid-cols-1 md:grid-cols-12 border-b border-muted bg-white text-black">
+            <div className="md:col-span-3 px-[var(--spacing-section)] py-[var(--spacing-section-y)] border-r border-muted flex items-center">
+              <ScrollReveal>
+                <span className="wcag-label font-mono text-[9px] uppercase tracking-[0.4em] italic font-bold">002.1 // PLAYGROUND</span>
+              </ScrollReveal>
+            </div>
+            <div className="md:col-span-9 px-[var(--spacing-section)] py-[var(--spacing-section-y)]">
+              <ScrollReveal delay={0.1}>
+                <h2 className="text-4xl font-display leading-[0.8] tracking-tighter uppercase font-bold text-black">
+                  <ShuffleText text="EXPERIMENTOS_ATIVOS" delay={0.15} speed={25} />
+                </h2>
+              </ScrollReveal>
+            </div>
+          </div>
+          <div className="px-[var(--spacing-section)] py-[var(--spacing-section-y)] flex flex-col gap-4">
+            <ScrollReveal delay={0.1}>
+              <a
+                href={withPrefix("/wtype/index.html")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col md:flex-row items-start md:items-center justify-between border border-muted p-8 hover:bg-surface-sunken transition-colors gap-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+                <div className="flex flex-col gap-4">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.4em] opacity-40 font-bold">EXPERIMENTO_01 // TIPOGRAFIA</span>
+                  <img src={withPrefix("/img/logo-wtype.svg")} alt="W+TYPE" className="h-6 md:h-7 object-contain object-left group-hover:opacity-70 transition-opacity" />
+                  <p className="font-body text-sm opacity-60 leading-loose max-w-[480px]">
+                    Builder de grade editorial com tipografia Bodoni e grid responsivo. Exploração de sistemas de composição interativa.
+                  </p>
+                </div>
+                <span className="font-mono text-[11px] uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity shrink-0">Abrir →</span>
+              </a>
+            </ScrollReveal>
+            <ScrollReveal delay={0.2}>
+              <a
+                href="https://disrupta.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col md:flex-row items-start md:items-center justify-between border border-muted p-8 hover:bg-surface-sunken transition-colors gap-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+                <div className="flex flex-col gap-4">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.4em] opacity-40 font-bold">EXPERIMENTO_02 // PRODUTO</span>
+                  <img src={withPrefix("/img/logo-disrupta.svg")} alt="Disrupta" className="h-6 md:h-7 object-contain object-left group-hover:opacity-70 transition-opacity" />
+                  <p className="font-body text-sm opacity-60 leading-loose max-w-[480px]">
+                    Calcule o valor da sua ideia com rigor técnico. Plataforma de precificação e validação estratégica de produtos digitais.
+                  </p>
+                </div>
+                <span className="font-mono text-[11px] uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity shrink-0">Abrir →</span>
+              </a>
+            </ScrollReveal>
+          </div>
+        </section>
 
         {/* FOOTER */}
         <footer id="connect" className="section-light col-span-12 border-t border-muted transition-colors pt-24 pb-12 bg-white text-black">

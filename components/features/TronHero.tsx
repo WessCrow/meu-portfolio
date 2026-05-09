@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
 import { withPrefix } from "../../app/utils/paths";
 import { TypewriterText } from "../ui/TypewriterText";
 
 interface TronHeroProps {
   isDarkMode: boolean;
   heroRef: React.RefObject<HTMLDivElement | null>;
-  cursorXSpring?: any;
-  cursorYSpring?: any;
+  cursorXSpring?: MotionValue<number>;
+  cursorYSpring?: MotionValue<number>;
 }
 
 export function TronHero({
@@ -150,10 +150,10 @@ export function TronHero({
     ];
 
     const SKILLS = [
-      '<p class="skills-line">\n  Cluster 01 [INTELIGÊNCIA]\n  Fluxos com IA\n  Descoberta Rápida\n  Sistemas de Prompt\n  Decisão por Dados\n</p>',
-      '<p class="skills-line">\n  Cluster 02 [INTERFACE]\n  Design Systems\n  UX de Precisão\n  Interfaces Acessíveis\n  UI Escalável\n</p>',
-      '<p class="skills-line">\n  Cluster 03 [ESTRATÉGIA]\n  Pensamento de Produto\n  Jornadas Otimizadas\n  Service Design\n  Métricas de ROI\n</p>',
-      '<p class="skills-line">\n  Cluster 04 [INOVAÇÃO]\n  Pensamento Sistêmico\n  Prototipação Ágil\n  Tecnologias Emergentes\n  Liderança Estratégica\n</p>'
+      'Cluster 01 [INTELIGÊNCIA]\nFluxos com IA\nDescobrerta Rápida\nSistemas de Prompt\nDecisão por Dados',
+      'Cluster 02 [INTERFACE]\nDesign Systems\nUX de Precisão\nInterfaces Acessíveis\nUI Escalável',
+      'Cluster 03 [ESTRATÉGIA]\nPensamento de Produto\nJornadas Otimizadas\nService Design\nMétricas de ROI',
+      'Cluster 04 [INOVAÇÃO]\nPensamento Sistêmico\nPrototipação Ágil\nTecnologias Emergentes\nLiderança Estratégica',
     ];
 
     const makeLines = () => {
@@ -388,9 +388,13 @@ export function TronHero({
         if (containerRef) (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         if (heroRef) (heroRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       }}
-      className={`absolute inset-0 overflow-hidden flex items-center justify-center transition-colors duration-1000 select-none ${isDarkMode ? "bg-[#060606]" : "bg-white"}`}
+      className={`absolute inset-0 overflow-hidden flex items-center justify-center transition-colors duration-1000 select-none ${isDarkMode ? "bg-[var(--color-hero-bg)]" : "bg-white"}`}
     >
-      <canvas ref={bgCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
+      <canvas
+        ref={bgCanvasRef}
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+      />
       <div
         className="absolute inset-0 pointer-events-none z-0"
         style={{
@@ -401,6 +405,8 @@ export function TronHero({
       <div className={`relative w-full h-full flex items-center justify-center overflow-hidden pointer-events-none ${isDarkMode ? "mix-blend-screen" : "mix-blend-multiply"}`}>
         <canvas
           ref={mainCanvasRef}
+          role="img"
+          aria-label="Arte generativa ASCII interativa representando o perfil de Wesley Alves"
           className="relative z-10 cursor-none w-full h-full object-cover pointer-events-auto scale-[1.2] origin-bottom md:origin-center opacity-50"
         />
       </div>
@@ -415,12 +421,14 @@ export function TronHero({
             >
               Olá, eu sou o
             </motion.span>
+            <h1 className="sr-only">Wess — Wesley Alves, Estrategista de Design &amp; Inovação</h1>
             <motion.img
               initial={{ opacity: 0, filter: "blur(10px)", scale: 1.1 }}
               animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
               transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
               src={withPrefix("/img/logo_wess.svg")}
-              alt="Wess Logo"
+              aria-hidden="true"
+              alt=""
               className={`w-[260px] md:w-[330px] lg:w-[700px] object-contain ${!isDarkMode ? "invert" : ""}`}
             />
             <motion.p
