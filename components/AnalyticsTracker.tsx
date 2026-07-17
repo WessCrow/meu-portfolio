@@ -2,82 +2,57 @@
 
 import { useEffect } from "react";
 
+/**
+ * Rastreio de cliques para o Umami Cloud.
+ *
+ * O script do Umami (carregado em app/layout.tsx) já registra pageviews e
+ * visitantes únicos automaticamente — não precisamos rastrear "visita" aqui.
+ *
+ * Este componente apenas captura cliques em elementos interativos (botões,
+ * links e qualquer elemento com data-umami-event) e os envia como eventos
+ * nomeados via window.umami.track(). Isso alimenta o painel de "eventos"
+ * do Umami, equivalente à antiga coluna "Lugares Mais Clicados".
+ */
+
+declare global {
+  interface Window {
+    umami?: {
+      track: (event: string, data?: Record<string, unknown>) => void;
+    };
+  }
+}
+
 export default function AnalyticsTracker() {
   useEffect(() => {
-    // 1. Visitor Tracking Logic
-    const visitorId = localStorage.getItem("visitorId");
-    const sessionTracked = sessionStorage.getItem("sessionTracked");
-    
-    let isNew = false;
-    if (!visitorId) {
-      const newId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem("visitorId", newId);
-      isNew = true;
-    }
-
-    const BASE_PATH = process.env.NODE_ENV === 'production' ? "/meu-portfolio" : "";
-    
-    // Only track one visit per session to avoid inflating numbers on refresh
-    if (!sessionTracked) {
-      fetch(`${BASE_PATH}/api/analytics/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "visit",
-          isNew: isNew,
-        }),
-      }).catch(err => console.error("Analytics error:", err));
-      
-      sessionStorage.setItem("sessionTracked", "true");
-    }
-
-    // 2. Click Tracking Logic
     const handleGlobalClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+      const target = e.target as HTMLElement | null;
       if (!target) return;
 
-      // Identify element by id, data-track, or tagName + className
-      const elementId = target.id;
-      const dataTrack = target.getAttribute("data-track");
-      const elementDesc = dataTrack || elementId || `${target.tagName.toLowerCase()}${target.className ? "." + target.className.split(" ").join(".") : ""}`;
+      const closestLink = target.closest("a");
+      const closestButton = target.closest("button");
+      const marked = target.closest("[data-umami-event]") as HTMLElement | null;
 
-      // Lightweight filter: only track meaningful elements (buttons, links, or marked elements)
-      const isInteractive = 
-        target.tagName === "BUTTON" || 
-        target.tagName === "A" || 
-        target.closest("button") || 
-        target.closest("a") || 
-        dataTrack;
+      // Só rastreia elementos com significado (links, botões ou marcados).
+      const trigger = marked || closestLink || closestButton;
+      if (!trigger) return;
 
-      if (isInteractive && elementDesc) {
-        // Find the "cleanest" name for the clicked area
-        let name = elementDesc;
-        const closestLink = target.closest("a");
-        const closestButton = target.closest("button");
-        
-        if (closestLink) {
-          name = closestLink.getAttribute("data-track") || closestLink.id || closestLink.innerText.trim() || name;
-        } else if (closestButton) {
-          name = closestButton.getAttribute("data-track") || closestButton.id || closestButton.innerText.trim() || name;
-        }
+      // Prioridade do nome: data-umami-event > id > texto visível.
+      let name =
+        trigger.getAttribute("data-umami-event") ||
+        trigger.id ||
+        (trigger as HTMLElement).innerText ||
+        trigger.tagName.toLowerCase();
 
-        // Limit name length
-        name = name.substring(0, 50);
+      // Normaliza: colapsa quebras de linha/espaços e limita o tamanho.
+      name = name.replace(/\s+/g, " ").trim().substring(0, 50);
+      if (!name) return;
 
-        fetch(`${BASE_PATH}/api/analytics/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "click",
-            element: name,
-          }),
-        }).catch(err => console.error("Analytics error:", err));
-      }
+      window.umami?.track(name);
     };
 
     window.addEventListener("click", handleGlobalClick);
     return () => window.removeEventListener("click", handleGlobalClick);
   }, []);
 
-  return null; // This component doesn't render anything
+  return null;
 }

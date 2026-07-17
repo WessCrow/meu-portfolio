@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Script from "next/script";
 import AnalyticsTracker from "../components/AnalyticsTracker";
 
 export const metadata: Metadata = {
@@ -22,6 +23,14 @@ export default function RootLayout({
         >
           Ir para conteúdo principal
         </a>
+        {/* Umami Cloud — analytics de visitantes/pageviews (privacy-first, sem cookies) */}
+        <Script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="a8d6bb80-581a-4b10-b84c-69db511bca7b"
+          strategy="afterInteractive"
+        />
+        {/* Rastreio de cliques em elementos interativos → window.umami.track() */}
         <AnalyticsTracker />
         {children}
         {/* GLOBAL CHROMATIC ABERRATION FILTER */}
